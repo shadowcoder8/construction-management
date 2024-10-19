@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Madan Construction Co.</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/dashboard.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Madan Construction Co. - Admin Dashboard</h1>
+        <div class="header-right">
+            <span class="username">Admin</span>
+            <button id="logout-button" class="btn btn-danger">Logout</button>
+        </div>
+    </div>
+    <div class="container">
+        <h2 class="welcome-message">Welcome, Admin!</h2>
+        <div class="card-container">
+            <div class="card" onclick="window.location.href='/labor-management/'">
+                <img src="https://plus.unsplash.com/premium_photo-1661932816149-291a447e3022?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Labor Management">
+                <h3>Labor Management</h3>
+                <p>Manage laborer details, add or edit information.</p>
+            </div>
+            <div class="card" onclick="window.location.href='/materials-management/'">
+                <img src="https://media.istockphoto.com/id/1138429558/photo/rows-of-shelves.jpg?s=1024x1024&w=is&k=20&c=bMRYi_ay8T0EtezBRkK-JJ98LpgcC8o6ri2Ixo-1l4c=" alt="Materials Management">
+                <h3>Materials Management</h3>
+                <p>Manage construction materials and inventory.</p>
+            </div>
+            <div class="card" onclick="window.location.href='/payment-management/'">
+                <img src="https://media.istockphoto.com/id/1205581593/photo/businessman-hugs-indian-rupee-money-bags-granting-financing-business-project-or-education.jpg?s=1024x1024&w=is&k=20&c=7jNSOYrKaUYzc-wBP5yneLa0iqVqfP7f301CNx8C3ek=" alt="Payment Management">
+                <h3>Payment Management</h3>
+                <p>Manage labor payments and wages.</p>
+            </div>
+            <div class="card" onclick="window.location.href='/reports/'">
+                <img src="https://plus.unsplash.com/premium_photo-1661431121792-81fa2b971d0f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Reports">
+                <h3>Reports</h3>
+                <p>Generate reports on labor, payments, and materials.</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>Developed by Rikesh Chhetri</p>
+    </div>
+</body>
+</html>

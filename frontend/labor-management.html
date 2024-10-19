@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labor Management - Madan Construction Co.</title>
+    <link rel="stylesheet" href="/static/labor-management.css">
+    <script src="/static/labor-management.js" defer></script>
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading...</div>
+    <div class="header">
+        <h1>Labor Management</h1>
+        <button onclick="window.location.href='/admin/dashboard/'" class="btn btn-primary">Back to Dashboard</button>
+        <button id="logout-button" class="btn btn-danger">Logout (Admin)</button>
+    </div>
+
+    <div class="container">
+        <!-- Labor Details Section -->
+        <section id="labor-details">
+            <h2>Manage Laborers</h2>
+            <form id="labor-form" class="form-group">
+                <input type="text" id="labor-name" placeholder="Laborer Name" required>
+                <input type="number" id="labor-age" placeholder="Age" required>
+                <select id="labor-gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+                <input type="number" id="labor-wage" placeholder="Daily Wage" required>
+                <input type="date" id="labor-date" placeholder="Date of Joining" required>
+                <input type="hidden" id="labor-id">
+                <div class="btn-group">
+                    <button type="submit" id="save-laborer-btn" class="btn btn-success">Add Laborer</button>
+                    <button type="button" id="close-labor-modal" class="btn btn-secondary">Close</button>
+                </div>
+            </form>
+
+            <!-- Search and Heading in one line -->
+            <div class="header-row">
+                <h3>Laborers List</h3>
+                <input type="text" id="search-bar" placeholder="Search by name..." class="input-search">
+            </div>
+
+            <table id="labor-list">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Daily Wage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div id="pagination-controls">
+                <button id="prev-button" class="btn btn-primary" disabled>Previous</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-button" class="btn btn-primary">Next</button>
+            </div>
+        </section>
+
+        <!-- Attendance History Section -->
+        <section id="attendance-history">
+            <div class="header-row">
+                <h2>Attendance History</h2>
+                <input type="text" id="search-bar-labor" placeholder="Search by labor name..." class="input-search">
+            </div>
+            <table id="attendance-list">
+                <thead>
+                    <tr>
+                        <th>Laborer Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Hours Worked</th>
+                        <th>Site Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- Pagination Controls for Attendance -->
+            <div id="attendance-pagination-controls">
+                <button id="prev-attendance-button" class="btn btn-primary" disabled>Previous</button>
+                <span id="attendance-page-info">Page 1</span>
+                <button id="next-attendance-button" class="btn btn-primary">Next</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="footer">
+        <p>Developed by <span class="footer-developer">Rikesh Chhetri</span></p>
+    </div>
+
+    <!-- Modal for Editing Attendance -->
+    <div id="attendance-modal" class="modal">
+        <div class="modal-content">
+            <h3>Record Attendance</h3>
+            <form id="attendance-form">
+                <input type="hidden" id="attendance-labor-id">
+                <input type="date" id="attendance-date" required>
+                <select id="attendance-status" required>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+                <input type="number" id="hours-worked" placeholder="Hours Worked" required>
+                <input type="text" id="attendance-site-name" placeholder="Site Name" required>
+                <button type="submit" class="btn btn-success">Save Attendance</button>
+            </form>
+            <button id="close-attendance-modal" class="btn btn-secondary">Close</button>
+        </div>
+    </div>
+</body>
+</html>
