@@ -248,5 +248,5 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
-if __name == "__main__":
+if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
