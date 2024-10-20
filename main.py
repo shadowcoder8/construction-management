@@ -9,6 +9,7 @@ from sqlalchemy import select
 import os
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+import uvicorn
 
 logging.basicConfig(level=logging.INFO)
 
@@ -246,3 +247,6 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
         return {"message": "Attendance record deleted successfully"}
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
+
+if __name == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
