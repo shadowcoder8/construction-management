@@ -150,7 +150,7 @@ async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
         result = await crud.delete_labour(db, labour_id)
         if not result:
             raise HTTPException(status_code=404, detail="Labour not found")
-        return {"message": "Labour deleted successfully"}
+        return {"message": "Laborer and associated attendance records deleted successfully"}
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 

@@ -3,6 +3,8 @@ const laborList = document.querySelector("#labor-list tbody");
 const attendanceModal = document.getElementById("attendance-modal");
 const attendanceList = document.querySelector("#attendance-list tbody");
 const searchInput = document.getElementById("search-bar");
+const searchAttendanceInput = document.getElementById("search-bar-labor");
+
 
 let editingLaborId = null;
 let currentLaborPage = 1;
@@ -93,6 +95,7 @@ async function deleteLaborer(id) {
         if (response.ok) {
             alert("Laborer deleted successfully!");
             loadLaborers(currentLaborPage);
+            loadAttendanceHistory(currentAttendancePage); // Refresh the attendance history
         } else {
             alert("Failed to delete laborer.");
         }
@@ -176,6 +179,7 @@ searchInput.addEventListener("input", () => {
         }
     }, 300);
 });
+
 
 // Pagination Controls for Laborers
 document.getElementById("prev-button").addEventListener("click", () => {
@@ -376,6 +380,35 @@ async function loadAttendanceHistory(page) {
         alert("Failed to load attendance history.");
     }
 }
+
+
+// Search Attendance For laborers based on both name and site name
+let debounceTimers;
+searchAttendanceInput.addEventListener("input", () => {
+    clearTimeout(debounceTimers);
+    debounceTimers = setTimeout(() => {
+        const searchTerms = searchAttendanceInput.value.toLowerCase();  // Get the search term
+
+        const rows = attendanceList.getElementsByTagName("tr");  // Get all table rows
+        for (const row of rows) {
+            const nameCell = row.cells[0];  // Assuming the laborer name is in the first cell
+            const siteCell = row.cells[4];  // Assuming the site name is in the fifth cell
+            if (nameCell && siteCell) {
+                const name = nameCell.textContent.toLowerCase();  // Get the laborer name
+                const siteName = siteCell.textContent.toLowerCase();  // Get the site name
+
+                // Show or hide the row if either the name or site name contains the search term
+                if (name.includes(searchTerms) || siteName.includes(searchTerms)) {
+                    row.style.display = "";  // Show row
+                } else {
+                    row.style.display = "none";  // Hide row
+                }
+            }
+        }
+    }, 300);
+});
+
+
 
 // Attach event listeners for edit and delete attendance buttons
 function attachAttendanceEventListeners() {

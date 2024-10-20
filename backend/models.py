@@ -6,7 +6,6 @@ from pydantic import BaseModel
 class Laborer(Base):
     __tablename__ = 'laborers'
 
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     age = Column(Integer)
@@ -14,7 +13,7 @@ class Laborer(Base):
     daily_wage = Column(Float)
     date_of_joining = Column(Date)
 
-    attendance_records = relationship("Attendance", back_populates="laborer")
+    attendance_records = relationship("Attendance", back_populates="laborer",cascade="all, delete-orphan")
 
 class Attendance(Base):
     __tablename__ = 'attendance'

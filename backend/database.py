@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
 from typing import AsyncGenerator
 
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"  # Use aiosqlite for async operations
@@ -14,8 +15,12 @@ AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_com
 
 Base = declarative_base()
 
+async def enable_wal_mode(db: AsyncSession):
+    await db.execute(text("PRAGMA journal_mode=WAL;"))  # Enable WAL mode
+
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as db:
+        await enable_wal_mode(db)  # Enable WAL mode on session start
         try:
             yield db  # Yield the session for use in route handlers
             await db.commit()  # Commit changes if everything goes well
