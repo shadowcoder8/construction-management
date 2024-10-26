@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from typing import AsyncGenerator
+import os
 
-# Database URL for SQLite with async support
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"  # Use aiosqlite for async operations
 
 # Create async engine
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
