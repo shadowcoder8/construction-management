@@ -95,7 +95,6 @@ async def labor_management(current_user: str = Depends(get_current_user)):
 # Create Labour
 @app.post("/labours/", response_model=schemas.Laborer)
 async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depends(get_db)):
-    logging.info(f"Received labour data: {labour}")  # Log incoming data
     try:
         return await crud.create_labour(db, labour)
     except SQLAlchemyError as e:
