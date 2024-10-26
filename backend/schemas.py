@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import date
+from backend.models import UnitType
 from typing import List, Optional
 
 class LaborerBase(BaseModel):
@@ -58,3 +59,51 @@ class AttendanceResponse(BaseModel):
     next: Optional[int] = None
     prev: Optional[int] = None
     total: int
+
+## Material Inventory Codes
+
+# Material Schema
+class MaterialBase(BaseModel):
+    name: str
+    quantity: float
+    unit: UnitType
+    site_id: int
+    arrival_date: date
+    transport_type: Optional[str]  # Optional field for transport type
+
+class MaterialCreate(MaterialBase):
+    pass
+
+class MaterialUpdate(MaterialBase):
+    pass
+
+class Material(MaterialBase):
+    id: int
+    site_name: Optional[str]  # To include the site name in the response
+
+    class Config:
+        from_attributes = True
+
+# Site Schema
+class SiteBase(BaseModel):
+    name: str
+    location: str
+
+class SiteCreate(SiteBase):
+   pass
+
+class SiteUpdate(SiteBase):
+   pass
+
+class Site(SiteBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+# Paginated Response
+class PaginatedMaterialsResponse(BaseModel):
+    results: List[Material]
+    total: int
+    next: Optional[int] = None
+    prev: Optional[int] = None

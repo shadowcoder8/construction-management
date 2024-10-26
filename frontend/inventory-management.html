@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials Management - Madan Construction Co.</title>
+    <link rel="stylesheet" href="/static/inventory-management.css">
+    <script src="/static/inventory-management.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Materials Management</h1>
+        <div class="header-right">
+            <button onclick="window.location.href='/admin/dashboard/'" class="btn">Back to Dashboard</button>
+            <button id="logout-button" class="btn btn-danger">Logout (Admin)</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Site Information Section -->
+        <section id="site-section">
+            <h2>Sites</h2>
+            <form id="site-form">
+                <input type="text" id="site-name" placeholder="Site Name" required>
+                <input type="text" id="site-location" placeholder="Site Location" required>
+                <button type="submit" id="save-site-btn">Add Or Update Site</button>
+                <button type="button" id="close-site-form">Close</button>
+            </form>
+
+            <input type="text" id="search-site" placeholder="Search sites by name...">
+            <table id="site-list">
+                <thead>
+                    <tr>
+                        <th>Site Name</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="site-pagination"></div>
+        </section>
+
+        <!-- Materials Section -->
+        <section id="material-section" class="mt-20">
+            <h2>Materials</h2>
+            <form id="material-form">
+                <input type="text" id="material-name" placeholder="Material Name" required>
+                <input type="number" id="material-quantity" placeholder="Quantity" required>
+                <select id="material-unit" required>
+                    <option value="">Select Unit</option>
+                    <option value="kg">Kilogram (kg)</option>
+                    <option value="liter">Liter</option>
+                    <option value="ton">Ton</option>
+                    <option value="piece">Piece</option>
+                    <option value="cubic_meter">Cubic Meter</option>
+                    <option value="bag">Bag</option>
+                    <option value="gallon">Gallon</option>
+                    <option value="pound">Pound</option>
+                    <option value="ounce">Ounce</option>
+                    <option value="metric_ton">Metric Ton</option>
+                    <option value="square_meter">Square Meter</option>
+                    <option value="cubic_foot">Cubic Foot</option>
+                    <option value="liter/km">Liter per Kilometer</option>
+                    <option value="ml">Milliliter</option>
+                    <option value="cl">Centiliter</option>
+                    <option value="ha">Hectare</option>
+                    <option value="acre">Acre</option>
+                    <option value="barrel">Barrel</option>
+                    <option value="dozen">Dozen</option>
+                    <option value="crate">Crate</option>
+                    <option value="pallet">Pallet</option>
+                    <option value="roll">Roll</option>
+                    <option value="nos">Nos</option>
+                    <option value="pieces/box">Pieces/Box</option>
+                </select>
+                <select id="material-site" required>
+                    <option value="">Select Site</option>
+                    <!-- Sites will be dynamically loaded here -->
+                </select>
+                <input type="date" id="arrival-date" placeholder="Arrival Date" required>
+                <select id="transport-type" required>
+                    <option value="">Select Transport Type</option>
+                    <option value="pickup">Pickup</option>
+                    <option value="truck">Truck</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="hidden" id="material-id">
+                <button type="submit" id="save-material-btn">Add Or Update Material</button>
+                <button type="button" id="close-material-form">Close</button>
+            </form>
+
+            <input type="text" id="search-material" placeholder="Search materials by name...">
+            <table id="material-list">
+                <thead>
+                    <tr>
+                        <th>Material Name</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
+                        <th>Site</th>
+                        <th>Arrival Date</th>
+                        <th>Transport Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="material-pagination"></div>
+        </section>
+    </div>
+
+    <div class="footer">
+        <p>Developed by Rikesh Chhetri</p>
+    </div>
+</body>
+</html>

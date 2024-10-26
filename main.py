@@ -6,12 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend import crud, models, schemas
 from backend.database import engine, get_db
 from sqlalchemy import select
+from typing import List
 import os
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 import uvicorn
 
-logging.basicConfig(level=logging.INFO)
+logger =logging.basicConfig(level=logging.INFO)
 
 # Lifespan event for startup and shutdown
 async def lifespan(app: FastAPI):
@@ -247,6 +248,100 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
         return {"message": "Attendance record deleted successfully"}
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
+    
+
+## Material Management Codes
+
+# Serve the materials management page
+@app.get("/materials-management/", response_class=HTMLResponse)
+async def materials_management_page():
+    with open("frontend/inventory-management.html") as file:
+        return file.read()
+
+# CRUD Operations for Materials
+
+# Create Material
+@app.post("/materials/", response_model=schemas.Material)
+async def create_material(material: schemas.MaterialCreate, db: AsyncSession = Depends(get_db)):
+    return await crud.create_material(db, material)
+
+@app.get("/materials/", response_model=List[schemas.Material])
+async def get_materials(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    return await crud.get_materials(db, skip, limit)
+
+@app.get("/materials/{material_id}", response_model=schemas.Material)
+async def get_material(material_id: int, db: AsyncSession = Depends(get_db)):
+    material = await crud.get_material(db, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    return material
+
+@app.put("/materials/{material_id}", response_model=schemas.Material)
+async def update_material_endpoint(material_id: int, material: schemas.MaterialUpdate, db: AsyncSession = Depends(get_db)):
+    updated_material = await crud.update_material(db, material_id, material)
+    if not updated_material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    return updated_material
+
+# Delete Material
+@app.delete("/materials/{material_id}", response_model=schemas.Material)
+async def delete_material(material_id: int, db: AsyncSession = Depends(get_db)):
+    deleted_material = await crud.delete_material(db, material_id)
+    if not deleted_material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    return deleted_material
+
+# Create Site
+@app.post("/sites/", response_model=schemas.Site)
+async def create_site(site: schemas.SiteCreate, db: AsyncSession = Depends(get_db)):
+    return await crud.create_site(db, site)
+
+# Get All Sites
+@app.get("/sites/", response_model=list[schemas.Site])
+async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    try:
+        sites = await crud.get_sites(db, skip=skip, limit=limit)
+        return sites  # This should return the list of sites directly
+    except SQLAlchemyError as e:
+        logging.error(f"Database error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Database error occurred")
+
+# Get Site by ID
+@app.get("/sites/{site_id}", response_model=schemas.Site)
+async def get_site(site_id: int, db: AsyncSession = Depends(get_db)):
+    return await crud.get_site(db, site_id)
+
+# Update Site
+@app.put("/sites/{site_id}", response_model=schemas.Site)
+async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession = Depends(get_db)):
+    # Check if the site exists
+    existing_site = await db.get(models.Site, site_id)
+    if not existing_site:
+        raise HTTPException(status_code=404, detail="Site not found")
+
+    # Update the site
+    try:
+        for key, value in site.model_dump().items():
+            setattr(existing_site, key, value)
+
+        db.add(existing_site)
+        await db.commit()
+        await db.refresh(existing_site)
+
+        return schemas.Site(
+            id=existing_site.id,
+            name=existing_site.name,
+            location=existing_site.location
+        )
+    except SQLAlchemyError:
+        raise HTTPException(status_code=500, detail="Database error occurred")
+
+
+# Delete Site
+@app.delete("/sites/{site_id}")
+async def delete_site(site_id: int, db: AsyncSession = Depends(get_db)):
+    result = await crud.delete_site(db, site_id)
+    return {"message": "Site deleted successfully"} if result else {"message": "Site not found"}
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

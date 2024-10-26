@@ -5,7 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from typing import AsyncGenerator
 
-SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"  # Use aiosqlite for async operations
+# Database URL for SQLite with async support
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"
 
 # Create async engine
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
@@ -13,12 +14,15 @@ engine = create_async_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_
 # Create an AsyncSession
 AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
+# Base model for declarative classes
 Base = declarative_base()
 
 async def enable_wal_mode(db: AsyncSession):
-    await db.execute(text("PRAGMA journal_mode=WAL;"))  # Enable WAL mode
+    """Enable Write-Ahead Logging mode for SQLite."""
+    await db.execute(text("PRAGMA journal_mode=WAL;"))
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    """Dependency that provides a database session for request handlers."""
     async with AsyncSessionLocal() as db:
         await enable_wal_mode(db)  # Enable WAL mode on session start
         try:
