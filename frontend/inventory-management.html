@@ -23,11 +23,11 @@
             <form id="site-form">
                 <input type="text" id="site-name" placeholder="Site Name" required>
                 <input type="text" id="site-location" placeholder="Site Location" required>
-                <button type="submit" id="save-site-btn">Add Or Update Site</button>
-                <button type="button" id="close-site-form">Close</button>
+                <button type="submit" id="save-site-btn" class="btn btn-success">Add Or Update Site</button>
+                <button type="button" id="close-site-form" class="btn btn-secondary">Close</button>
             </form>
 
-            <input type="text" id="search-site" placeholder="Search sites by name...">
+            <input type="text" id="search-site" placeholder="Search sites by name..." class="input-search">
             <table id="site-list">
                 <thead>
                     <tr>
@@ -78,7 +78,7 @@
                     <option value="">Select Site</option>
                     <!-- Sites will be dynamically loaded here -->
                 </select>
-                <input type="date" id="arrival-date" placeholder="Arrival Date" required>
+                <input type="date" id="arrival-date" required>
                 <select id="transport-type" required>
                     <option value="">Select Transport Type</option>
                     <option value="pickup">Pickup</option>
@@ -86,11 +86,11 @@
                     <option value="other">Other</option>
                 </select>
                 <input type="hidden" id="material-id">
-                <button type="submit" id="save-material-btn">Add Or Update Material</button>
-                <button type="button" id="close-material-form">Close</button>
+                <button type="submit" id="save-material-btn" class="btn btn-success">Add Or Update Material</button>
+                <button type="button" id="close-material-form" class="btn btn-secondary">Close</button>
             </form>
 
-            <input type="text" id="search-material" placeholder="Search materials by name...">
+            <input type="text" id="search-material" placeholder="Search materials by name..." class="input-search">
             <table id="material-list">
                 <thead>
                     <tr>

@@ -1,4 +1,3 @@
-
 * {
     margin: 0;
     padding: 10px;
@@ -59,8 +58,8 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2;
-    margin-bottom: 10px;  /* Added bottom margin for table headers */
+    background-color: #007bff; /* Blue for table headers */
+    color: white; /* White text for headers */
 }
 
 .btn {
@@ -71,6 +70,7 @@ th {
     font-weight: bold;
     transition: background-color 0.3s ease;
     display: inline-block;  /* Ensure buttons respect margins */
+    font-size: 16px; /* Increased font size */
 }
 
 .btn-primary {
@@ -79,7 +79,7 @@ th {
 }
 
 .btn-success {
-    background-color: #28a745;
+    background-color: #28a745; /* Green color for success */
     color: white;
 }
 
@@ -89,7 +89,7 @@ th {
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+    background-color: #6c757d; /* Gray color for secondary actions */
     color: white;
 }
 
@@ -97,13 +97,14 @@ th {
     opacity: 0.9;
 }
 
-.input-search {
-    padding: 10px;
+.input-search, input[type="text"], input[type="number"], select {
+    padding: 12px; /* Increased padding */
     margin: 20px 0;  /* Increased vertical margin */
     width: 100%;
-    max-width: 300px;
+    max-width: 300px; /* Maximum width for inputs */
     border: 1px solid #ddd;
     border-radius: 5px;
+    font-size: 16px; /* Increased font size for inputs */
 }
 
 .footer {
@@ -156,7 +157,7 @@ th {
 
 .form-group input, 
 .form-group select {
-    padding: 10px;
+    padding: 12px; /* Increased padding for form elements */
     margin: 10px 0;  /* Increased vertical margin for inputs */
     width: calc(50% - 12px);
     border: 1px solid #ddd;
@@ -172,6 +173,28 @@ th {
 
 .mt-20 {
     margin-top: 30px; /* Add top margin for spacing */
+}
+
+/* Pagination Styles */
+#site-pagination, #material-pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0; /* Add margin for spacing */
+}
+
+#site-pagination button, #material-pagination button {
+    padding: 10px 15px; /* Increased padding for pagination buttons */
+    margin: 0 5px; /* Margin between buttons */
+    font-size: 16px; /* Increased font size for buttons */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #007bff; /* Button color */
+    color: white; /* Button text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Transition effect */
+}
+
+#site-pagination button:hover, #material-pagination button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
 }
 
 /* Media Queries for Responsiveness */

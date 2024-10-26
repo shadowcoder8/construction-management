@@ -95,6 +95,7 @@ materialForm.addEventListener('submit', async (e) => {
     }
 });
 
+
 // Add material
 async function addMaterial(material) {
     const response = await fetch('/materials/', {
@@ -259,6 +260,7 @@ siteForm.addEventListener('submit', async (e) => {
     }
 });
 
+
 // Add site
 async function addSite(site) {
     const response = await fetch('/sites/', {
@@ -340,6 +342,19 @@ function updatePagination(paginationElement, currentPage, totalItems, loadFuncti
     nextButton.onclick = () => loadFunction(currentPage + 1);
     paginationElement.appendChild(nextButton);
 }
+
+// Close button for the site form
+document.getElementById("close-site-form").addEventListener("click", () => {
+    const siteForm = document.getElementById("site-form");
+    siteForm.reset(); // Reset the form inputs
+});
+
+// Close button for the material form
+document.getElementById("close-material-form").addEventListener("click", () => {
+    const materialForm = document.getElementById("material-form");
+    materialForm.reset(); // Reset the form inputs
+});
+
 
 // Load initial materials and sites
 loadMaterials(currentMaterialPage);
