@@ -15,6 +15,7 @@ class Laborer(Base):
     date_of_joining = Column(Date)
 
     attendance_records = relationship("Attendance", back_populates="laborer",cascade="all, delete-orphan")
+    payments = relationship("Payment", back_populates="labor")
 
 class Attendance(Base):
     __tablename__ = 'attendance'
@@ -26,7 +27,7 @@ class Attendance(Base):
     hours_worked = Column(Float)
     site_name = Column(String)
 
-    laborer = relationship("Laborer", back_populates="attendance_records")
+    laborer = relationship("Laborer", back_populates="attendance_records") 
 
 # Pydantic model for login
 class LoginRequest(BaseModel):
@@ -83,3 +84,20 @@ class Site(Base):
     location = Column(String, nullable=True)
 
     materials = relationship("Material", back_populates="site")
+    payments = relationship("Payment", back_populates="site")
+
+
+# Payment Model
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Float, nullable=False)
+    date = Column(Date, nullable=False)
+    labor_id = Column(Integer, ForeignKey("laborers.id"), nullable=False)
+    site_id = Column(Integer, ForeignKey("sites.id"), nullable=False)
+    material_name =  Column(String,nullable=True)
+    description = Column(String, nullable=True)
+
+    labor = relationship("Laborer", back_populates="payments")
+    site = relationship("Site", back_populates="payments")

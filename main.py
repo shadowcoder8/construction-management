@@ -10,18 +10,40 @@ from typing import List
 import os
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+from backend import utility
 import uvicorn
 
 logger =logging.basicConfig(level=logging.INFO)
 
 # Lifespan event for startup and shutdown
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        # Create the database tables
-        await conn.run_sync(models.Base.metadata.create_all)
-    yield
-    # Clean up resources if needed on shutdown
-    await engine.dispose()
+    # Startup tasks
+    # Authenticate with Mega and download the latest database
+    service =  utility.authenticate_google_drive()
+    try:
+        await utility.download_file_from_drive(service)  # Ensure the latest database file is available
+
+        # Set up the database
+        async with engine.begin() as conn:
+            await conn.run_sync(models.Base.metadata.create_all)
+        print("Database setup complete.")
+    except Exception as e:
+        print(f"Startup error: {e}")
+
+    yield  # FastAPI continues running here
+
+    # Shutdown tasks
+    try:
+        # Upload the updated database file to Mega on shutdown
+        await utility.upload_file_to_drive(service)
+        print("Database upload to Mega complete.")
+
+        # Clean up database resources
+        await engine.dispose()
+        print("Database engine disposed.")
+    except Exception as e:
+        print(f"Shutdown error: {e}")
+
 
 app = FastAPI(lifespan=lifespan)
 
@@ -335,12 +357,54 @@ async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession =
     except SQLAlchemyError:
         raise HTTPException(status_code=500, detail="Database error occurred")
 
-
 # Delete Site
 @app.delete("/sites/{site_id}")
 async def delete_site(site_id: int, db: AsyncSession = Depends(get_db)):
     result = await crud.delete_site(db, site_id)
     return {"message": "Site deleted successfully"} if result else {"message": "Site not found"}
 
+## Payments API Module
+# Serve the payment management page
+@app.get("/payment-management/", response_class=HTMLResponse)
+async def read_payments_management():
+    # Load and return the payment-management.html file
+    with open(os.path.join("frontend/payment-management.html")) as file:
+        return file.read()
+
+@app.post("/payments/", response_model=schemas.Payment)
+async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depends(get_db)):
+    db_payment = models.Payment(
+        amount=payment.amount,
+        date=payment.date,
+        labor_id=payment.labor_id,
+        site_id=payment.site_id,
+        material_name=payment.material_name,
+        description=payment.description
+    )
+    db.add(db_payment)
+    await db.commit()
+    await db.refresh(db_payment)  # Refresh to get updated data
+    return db_payment
+
+
+@app.get("/payments/", response_model=List[schemas.Payment])
+async def get_payments_endpoint(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    return await crud.get_payments(db, skip, limit)
+
+@app.get("/payments/{payment_id}", response_model=schemas.Payment)
+async def get_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
+    return await crud.get_payment(db, payment_id)
+
+@app.put("/payments/{payment_id}", response_model=schemas.Payment)
+async def update_payment_endpoint(payment_id: int, payment: schemas.PaymentUpdate, db: AsyncSession = Depends(get_db)):
+    return await crud.update_payment(db, payment_id, payment)
+
+@app.delete("/payments/{payment_id}", response_model=schemas.Payment)
+async def delete_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
+    return await crud.delete_payment(db, payment_id)
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+

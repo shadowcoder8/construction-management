@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Management - Madan Construction Co.</title>
+    <link rel="stylesheet" href="/static/payment-management.css">
+    <script src="/static/payment-management.js" defer></script>
+</head>
+<body>
+    <div class="header">
+        <h1>Payment Management</h1>
+        <div class="header-right">
+            <button onclick="window.location.href='/admin/dashboard/'" class="btn">Back to Dashboard</button>
+            <button id="logout-button" class="btn btn-danger">Logout (Admin)</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <section id="payment-section" class="mt-20">
+            <h2>Record Payment</h2>
+            <form id="payment-form">
+                <input type="number" id="payment-amount" placeholder="Payment Amount" required>
+                <input type="date" id="payment-date" required>
+
+                <select id="labor-select" required>
+                    <option value="">Select Labor</option>
+                    <!-- Labor options will be dynamically loaded here -->
+                </select>
+
+                <select id="site-select" required>
+                    <option value="">Select Site</option>
+                    <!-- Site options will be dynamically loaded here -->
+                </select>
+                <input type="text" id="material-name" placeholder="Material (Optional)">
+                <input type="text" id="payment-description" placeholder="Description (Optional)">
+                <button type="submit" id="save-payment-btn" class="btn btn-primary">Add Payment</button>
+                <button type="button" id="close-payment-form" class="btn btn-secondary">Close</button>
+            </form>
+
+            <input type="text" id="search-payment" placeholder="Search payments..." class="input-search">
+            <table id="payment-list">
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Labor Name</th>
+                        <th>Site Name</th>
+                        <th>Material</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="payment-pagination"></div>
+        </section>
+    </div>
+
+    <div class="footer">
+        <p>Developed by Rikesh Chhetri</p>
+    </div>
+</body>
+</html>

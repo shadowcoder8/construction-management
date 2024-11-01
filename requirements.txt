@@ -27,3 +27,5 @@ starlette==0.40.0
 typing_extensions==4.12.2
 uvicorn==0.32.0
 wheel==0.44.0
+mega.py
+python-dotenv

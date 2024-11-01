@@ -101,9 +101,34 @@ class Site(SiteBase):
     class Config:
         from_attributes = True
 
+
+# Payment Schemas 
+class PaymentBase(BaseModel):
+    amount: float
+    date: date
+    labor_id: int
+    site_id: int
+    material_name: Optional[str] = None  # To include the material name in the response
+    description: Optional[str] = None  # Optional description for the payment
+
+class PaymentCreate(PaymentBase):
+    pass
+
+class PaymentUpdate(PaymentBase):
+    pass
+
+class Payment(PaymentBase):
+    id: int
+    labor_name: str  # To include the labor name in the response
+    site_name: str   # To include the site name in the response
+    class Config:
+        from_attributes = True  # Allow ORM mode for easy data conversion
 # Paginated Response
 class PaginatedMaterialsResponse(BaseModel):
     results: List[Material]
     total: int
     next: Optional[int] = None
     prev: Optional[int] = None
+
+
+

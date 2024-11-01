@@ -4,8 +4,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from backend import models, schemas
 from sqlalchemy.orm import selectinload,joinedload
-from backend.models import Attendance,Site,Material
-from backend.schemas import MaterialUpdate
+from backend.models import Attendance,Site,Material,Payment
+from backend.schemas import PaymentCreate,PaymentUpdate
 from typing import List,Optional
 import logging
 
@@ -373,3 +373,66 @@ async def delete_site(db: AsyncSession, site_id: int) -> bool:
     await db.delete(site)
     await db.commit()
     return True
+
+## Payments API Crud
+
+async def create_payment(db: AsyncSession, payment: PaymentCreate) -> Payment:
+    new_payment = Payment(**payment.model_dump())
+    try:
+        db.add(new_payment)
+        await db.commit()
+        await db.refresh(new_payment)
+        return new_payment
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail="Database error occurred")
+
+async def get_payments(db: AsyncSession, skip: int = 0, limit: int = 10) -> List[Payment]:
+    query = (
+        select(Payment)
+        .options(joinedload(Payment.labor), joinedload(Payment.site))
+        .offset(skip)
+        .limit(limit)
+    )
+    result = await db.execute(query)
+    payments = result.scalars().all()
+    
+    # Include labor_name and site_name in the response
+    for payment in payments:
+        logger.info(payment)
+        payment.labor_name = payment.labor.name if payment.labor else "Unknown"
+        payment.site_name = payment.site.name if payment.site else "Unknown"
+
+    logger.info(payments)
+
+    return payments
+
+
+async def get_payment(db: AsyncSession, payment_id: int) -> Payment:
+    payment = await db.get(Payment, payment_id)
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    return payment
+
+async def update_payment(db: AsyncSession, payment_id: int, payment: PaymentUpdate) -> Payment:
+    existing_payment = await db.get(Payment, payment_id)
+    if not existing_payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    
+    for key, value in payment.dict().items():
+        setattr(existing_payment, key, value)
+
+    try:
+        await db.commit()
+        await db.refresh(existing_payment)
+    except SQLAlchemyError:
+        raise HTTPException(status_code=500, detail="Database error occurred")
+
+    return existing_payment
+
+async def delete_payment(db: AsyncSession, payment_id: int) -> None:
+    existing_payment = await db.get(Payment, payment_id)
+    if not existing_payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    
+    await db.delete(existing_payment)
+    await db.commit()
