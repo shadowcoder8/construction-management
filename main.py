@@ -21,6 +21,9 @@ async def lifespan(app: FastAPI):
     # Authenticate with Mega and download the latest database
     service =  utility.authenticate_google_drive()
     try:
+        # Upload the updated database file to Google Drive on startup
+        await utility.upload_file_to_drive(service)
+        print("Database upload to Google Drive complete.")
         await utility.download_file_from_drive(service)  # Ensure the latest database file is available
 
         # Set up the database
@@ -36,7 +39,7 @@ async def lifespan(app: FastAPI):
     try:
         # Upload the updated database file to Mega on shutdown
         await utility.upload_file_to_drive(service)
-        print("Database upload to Mega complete.")
+        print("Database upload to Google Drive complete.")
 
         # Clean up database resources
         await engine.dispose()
