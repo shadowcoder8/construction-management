@@ -23,8 +23,12 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('payment-form').reset();  // Clear the form
     });
 
+    let debounceTimer;
     document.getElementById('search-payment').addEventListener('input', (e) => {
-        filterPayments(e.target.value);
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            filterPayments(e.target.value);
+        }, 300);
     });
 });
 
@@ -214,10 +218,12 @@ async function updatePayment(paymentId, paymentData) {
 
 // Filter payments
 function filterPayments(searchTerm) {
+    // ⚡ Bolt: Moved toLowerCase() outside the loop and added debouncing to prevent UI blocking
+    const term = searchTerm.toLowerCase();
     const rows = document.querySelectorAll('#payment-list tbody tr');
     rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
         const text = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
-        row.style.display = text.includes(searchTerm.toLowerCase()) ? '' : 'none';
+        row.style.display = text.includes(term) ? '' : 'none';
     });
 }
