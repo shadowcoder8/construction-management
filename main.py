@@ -8,6 +8,7 @@ from backend.database import engine, get_db
 from sqlalchemy import select
 from typing import List
 import os
+import secrets
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 from backend import utility
@@ -78,10 +79,10 @@ async def admin_login(login_request: models.LoginRequest, response: Response):
     from backend.auth import authenticate_admin
     try:
         authenticate_admin(login_request.username, login_request.password)
-        # Create a session for the admin user
-        session_id = login_request.username  # For simplicity, using username as session id
-        sessions[session_id] = True  # Store session
-        response.set_cookie("session_id", session_id)
+        # Create a secure session ID for the admin user
+        session_id = secrets.token_hex(32)
+        sessions[session_id] = login_request.username  # Map session ID to username
+        response.set_cookie("session_id", session_id, httponly=True)
         return {"message": "Login successful"}
     except Exception as e:
         logging.error(f"Login failed for {login_request.username}: {str(e)}")
@@ -89,10 +90,11 @@ async def admin_login(login_request: models.LoginRequest, response: Response):
 
 # Admin logout route
 @app.post("/admin/logout/")
-async def admin_logout(request: Request):
+async def admin_logout(request: Request, response: Response):
     session_id = request.cookies.get("session_id")
     if session_id in sessions:
         del sessions[session_id]  # Remove session
+    response.delete_cookie("session_id")
     return {"message": "Logout successful"}
 
 # Dependency to check if user is authenticated
@@ -100,7 +102,7 @@ async def get_current_user(request: Request):
     session_id = request.cookies.get("session_id")
     if session_id not in sessions:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    return session_id
+    return sessions[session_id]
 
 # Dashboard route
 @app.get("/admin/dashboard/", response_class=HTMLResponse)
