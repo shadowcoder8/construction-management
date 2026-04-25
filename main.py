@@ -18,13 +18,16 @@ logger =logging.basicConfig(level=logging.INFO)
 # Lifespan event for startup and shutdown
 async def lifespan(app: FastAPI):
     # Startup tasks
-    # Authenticate with Mega and download the latest database
-    service =  utility.authenticate_google_drive()
+    # Authenticate with Google Drive and download the latest database
+    service = utility.authenticate_google_drive()
     try:
-        # Upload the updated database file to Google Drive on startup
-        await utility.upload_file_to_drive(service)
-        print("Database upload to Google Drive complete.")
-        await utility.download_file_from_drive(service)  # Ensure the latest database file is available
+        if service:
+            # Upload the updated database file to Google Drive on startup
+            await utility.upload_file_to_drive(service)
+            print("Database upload to Google Drive complete.")
+            await utility.download_file_from_drive(service)  # Ensure the latest database file is available
+        else:
+            print("Skipping Google Drive operations due to missing or invalid credentials.")
 
         # Set up the database
         async with engine.begin() as conn:
