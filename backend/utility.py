@@ -19,8 +19,15 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def authenticate_google_drive():
     """Authenticate with Google Drive API using a service account."""
-    creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
-    return build('drive', 'v3', credentials=creds)
+    if not CREDENTIALS_PATH or not os.path.exists(CREDENTIALS_PATH):
+        print("Warning: GOOGLE_CREDENTIALS_PATH is not set or invalid. Google Drive integration disabled.")
+        return None
+    try:
+        creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
+        return build('drive', 'v3', credentials=creds)
+    except Exception as e:
+        print(f"Warning: Failed to authenticate with Google Drive: {e}")
+        return None
 
 async def upload_file_to_drive(service):
     """Uploads or updates the SQLite file on Google Drive."""
