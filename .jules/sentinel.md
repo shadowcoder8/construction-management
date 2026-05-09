@@ -1,4 +1,4 @@
-## 2024-05-18 - [Insecure Session Management]
-**Vulnerability:** Insecure session management using the username as the session ID.
-**Learning:** Using predictable session IDs makes the application vulnerable to session hijacking and unauthorized access.
-**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.
+## 2024-05-09 - Missing Authentication on Sensitive Endpoints
+**Vulnerability:** Several sensitive API endpoints (e.g., `create_labour`, `update_material_endpoint`, `delete_site`, etc.) were accessible without authentication because the `Depends(get_current_user)` dependency was omitted.
+**Learning:** Forgetting to apply authentication dependencies to new or updated routes can leave an entire sub-system exposed to unauthenticated users. This is a common oversight in FastAPI when standardizing routing without a central router configuration.
+**Prevention:** Always verify that every sensitive route includes the `Depends(get_current_user)` parameter. Consider applying the dependency globally via an `APIRouter` to ensure all contained routes are protected by default.
