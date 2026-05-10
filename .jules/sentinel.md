@@ -1,4 +1,7 @@
 ## 2024-05-18 - [Insecure Session Management]
 **Vulnerability:** Insecure session management using the username as the session ID.
 **Learning:** Using predictable session IDs makes the application vulnerable to session hijacking and unauthorized access.
-**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.
+**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.## 2024-05-10 - [Sentinel Fix Hardcoded Secrets in Admin Auth]
+**Vulnerability:** Admin authentication endpoints used hardcoded plaintext username ("admin") and password ("admin123") in the code. Exception handling masked internal errors with generic 401s, preventing the detection of missing environmental credentials. Exception strings were exposed leading to internal details being leaked.
+**Learning:** We should never hardcode credentials and must securely evaluate them utilizing environment variables instead. `secrets.compare_digest` should be used instead of regular string comparison (`==`) for evaluating strings such as passwords to prevent timing attacks. Fail securely by distinguishing authentication errors (401) from server configuration errors (500), but don't leak internal error messages (`str(e)`) to the client.
+**Prevention:** Always leverage `os.environ.get()` for sensitive values. Utilize `secrets.compare_digest` for password and credential comparison. Never leak the internal exceptions into the generic API response and make sure explicit HTTPExceptions from underlying modules are correctly handled and not masked.
