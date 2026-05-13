@@ -1,4 +1,4 @@
-## 2024-05-18 - [Insecure Session Management]
-**Vulnerability:** Insecure session management using the username as the session ID.
-**Learning:** Using predictable session IDs makes the application vulnerable to session hijacking and unauthorized access.
-**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.
+## 2024-05-18 - [Hardcoded Admin Credentials]
+**Vulnerability:** Admin authentication was using hardcoded plaintext credentials (`admin`/`admin123`) in `backend/auth.py`.
+**Learning:** Hardcoded secrets compromise the entire system and make password rotation impossible without a code change. Additionally, plain string comparisons expose the application to timing attacks, and generic exception catches in FastAPI routes (`main.py`) were masking 500 internal errors by returning 401 Unauthorized with detailed `str(e)` messages.
+**Prevention:** Read secrets from environment variables (`ADMIN_USERNAME` and `ADMIN_PASSWORD`), use `secrets.compare_digest` for timing attack resistant comparisons, fail securely if configuration is missing, and avoid leaking internal error messages in exception handling.
