@@ -1,3 +1,4 @@
+import asyncio
 import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -24,17 +25,20 @@ def authenticate_google_drive():
 
 async def upload_file_to_drive(service):
     """Uploads or updates the SQLite file on Google Drive."""
+    loop = asyncio.get_running_loop()
     try:
         # Search for an existing file by name in the specified Google Drive folder
-        results = service.files().list(
+        request = service.files().list(
             q=f"name='{REMOTE_FILE_NAME}' and '{GOOGLE_DRIVE_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
-        ).execute()
+        )
+        results = await loop.run_in_executor(None, request.execute)
 
         # Delete existing file if found
         if results.get('files'):
             for file in results['files']:
-                service.files().delete(fileId=file['id']).execute()
+                delete_request = service.files().delete(fileId=file['id'])
+                await loop.run_in_executor(None, delete_request.execute)
                 print(f"Deleted existing file '{file['name']}' on Google Drive.")
         else:
             print(f"File '{REMOTE_FILE_NAME}' not found; a new file will be uploaded.")
@@ -45,7 +49,8 @@ async def upload_file_to_drive(service):
             'parents': [GOOGLE_DRIVE_FOLDER_ID]
         }
         media = MediaFileUpload(LOCAL_FILE_PATH, resumable=True)
-        uploaded_file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        create_request = service.files().create(body=file_metadata, media_body=media, fields='id')
+        uploaded_file = await loop.run_in_executor(None, create_request.execute)
         print(f"File uploaded to Google Drive successfully. File ID: {uploaded_file.get('id')}")
 
     except HttpError as e:
@@ -54,12 +59,14 @@ async def upload_file_to_drive(service):
 
 async def download_file_from_drive(service):
     """Downloads the latest SQLite file from Google Drive to LOCAL_FILE_PATH."""
+    loop = asyncio.get_running_loop()
     try:
         # Search for the file by name
-        results = service.files().list(
+        request = service.files().list(
             q=f"name='{REMOTE_FILE_NAME}' and '{GOOGLE_DRIVE_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
-        ).execute()
+        )
+        results = await loop.run_in_executor(None, request.execute)
 
         if not results.get('files'):
             print(f"File '{REMOTE_FILE_NAME}' not found in Google Drive.")
@@ -68,12 +75,16 @@ async def download_file_from_drive(service):
         # Download the file
         file_id = results['files'][0]['id']
         request = service.files().get_media(fileId=file_id)
-        with open(LOCAL_FILE_PATH, 'wb') as fh:
-            downloader = MediaIoBaseDownload(fh, request)
-            done = False
-            while not done:
-                status, done = downloader.next_chunk()
-                print(f"Download progress: {int(status.progress() * 100)}%")
+
+        def download_sync():
+            with open(LOCAL_FILE_PATH, 'wb') as fh:
+                downloader = MediaIoBaseDownload(fh, request)
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+                    print(f"Download progress: {int(status.progress() * 100)}%")
+
+        await loop.run_in_executor(None, download_sync)
 
         print(f"Downloaded file to {LOCAL_FILE_PATH} successfully.")
 
