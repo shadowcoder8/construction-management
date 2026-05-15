@@ -1,4 +1,7 @@
 ## 2024-05-18 - [Insecure Session Management]
 **Vulnerability:** Insecure session management using the username as the session ID.
 **Learning:** Using predictable session IDs makes the application vulnerable to session hijacking and unauthorized access.
-**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.
+**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.## 2024-05-15 - Removed Hardcoded Credentials and Prevented Timing Attacks
+**Vulnerability:** Admin authentication used hardcoded plaintext credentials ("admin" / "admin123") and standard string comparison. The exception handler in `main.py` exposed internal error details `str(e)`.
+**Learning:** Hardcoded secrets present a critical vulnerability. Standard string comparisons leak timing information allowing attackers to brute-force credentials byte-by-byte. Broad exception handling leaking internal strings to clients acts as an information disclosure vulnerability.
+**Prevention:** Always use environment variables (`os.environ.get`) for secrets and fail securely (e.g., 500 error) if they are missing. Use `secrets.compare_digest` for constant-time comparison to prevent timing attacks. In API handlers, explicitly handle expected errors (`HTTPException`) and catch broad exceptions (`Exception`) separately to return generic errors (e.g., "Unauthorized" instead of the stack trace or exception string).
