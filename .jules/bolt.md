@@ -1,3 +1,7 @@
-## 2026-04-24 - Added search debounce and optimized search query
-**Learning:** Found that a search filter input field was repeatedly calling .toLowerCase() on the searchTerm inside a loop iterating over every table row, and also doing so synchronously on every keystroke.
-**Action:** Adding a debounce prevents UI thread blocking, and hoisting the searchTerm.toLowerCase() outside the loop optimizes the operation. Always check loop contents for operations that yield a static result and can be evaluated before the loop.
+## 2024-05-18 - Non-blocking File I/O with FileResponse
+
+**Pattern:** Replacing synchronous `open().read()` calls with `FileResponse` in async FastAPI routes.
+
+**Learning:** When serving static files or returning file contents in FastAPI, using synchronous `open()` inside an `async def` route blocks the entire event loop, severely degrading performance under load. Since the environment did not have `aiofiles` installed, the most idiomatic and performant solution is to use `fastapi.responses.FileResponse`. `FileResponse` automatically handles setting the correct headers (like `Content-Type` and `Content-Length`) and offloads the file I/O to a thread pool via `anyio`, ensuring the event loop remains responsive.
+
+**Action:** Replaced all instances of `with open(...) as file: return file.read()` with `return FileResponse(...)` across multiple HTML-serving routes (`read_root`, `admin_dashboard`, `labor_management`, `materials_management_page`, `read_payments_management`). This change makes the code more concise, removes blocking calls, and relies on built-in optimal FastAPI features without adding extra dependencies.
