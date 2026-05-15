@@ -1,3 +1,5 @@
-## 2026-04-24 - Added search debounce and optimized search query
-**Learning:** Found that a search filter input field was repeatedly calling .toLowerCase() on the searchTerm inside a loop iterating over every table row, and also doing so synchronously on every keystroke.
-**Action:** Adding a debounce prevents UI thread blocking, and hoisting the searchTerm.toLowerCase() outside the loop optimizes the operation. Always check loop contents for operations that yield a static result and can be evaluated before the loop.
+## 2024-05-18 - [Offload Google Drive API to Threadpool]
+
+**Learning:** The Google Drive API client executes operations synchronously which can severely block an async event loop (like FastAPI). I learned that offloading operations like `execute()` and `next_chunk()` using `asyncio.to_thread` improves concurrency. Specifically, I wrapped things like `service.files().list(...).execute` instead of wrapping the call `execute()`, to pass the method reference. This prevents blocking other handlers handling incoming requests.
+
+**Action:** Added `import asyncio` and wrapped `execute` and `next_chunk` from the googleapiclient calls in `upload_file_to_drive` and `download_file_from_drive` within `backend/utility.py` with `await asyncio.to_thread`.
