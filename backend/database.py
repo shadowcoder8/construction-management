@@ -5,6 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import text
 from typing import AsyncGenerator
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./labour_management.db"  # Use aiosqlite for async operations
 
@@ -30,9 +33,9 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             await db.commit()  # Commit changes if everything goes well
         except SQLAlchemyError as e:
             await db.rollback()  # Roll back in case of error
-            print(f"Database error: {e}")  # Log the error (can be improved with logging)
+            logger.error(f"Database error: {e}")  # Log the error
             raise e  # Re-raise the exception for further handling in route handlers
         except Exception as e:
             await db.rollback()  # Roll back for any other exceptions
-            print(f"Unexpected error: {e}")  # Log the error
+            logger.error(f"Unexpected error: {e}")  # Log the error
             raise e  # Re-raise the exception for further handling in route handlers
