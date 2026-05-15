@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Request, Response,Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend import crud, models, schemas
 from backend.database import engine, get_db
@@ -70,8 +70,7 @@ sessions = {}
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     # Load and return the login.html file
-    with open(os.path.join("frontend", "login.html")) as file:
-        return file.read()
+    return FileResponse(os.path.join("frontend", "login.html"))
 
 # Admin login route
 @app.post("/admin/login/")
@@ -108,14 +107,12 @@ async def get_current_user(request: Request):
 @app.get("/admin/dashboard/", response_class=HTMLResponse)
 async def admin_dashboard(current_user: str = Depends(get_current_user)):
     # Load and return the dashboard.html file
-    with open(os.path.join("frontend", "dashboard.html")) as file:
-        return file.read()
+    return FileResponse(os.path.join("frontend", "dashboard.html"))
 
 @app.get("/labor-management/", response_class=HTMLResponse)
 async def labor_management(current_user: str = Depends(get_current_user)):
     # Load and return the labor_management.html file
-    with open(os.path.join("frontend", "labor-management.html")) as file:
-        return file.read()
+    return FileResponse(os.path.join("frontend", "labor-management.html"))
 
 ## Labour details
 
@@ -281,8 +278,7 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
 # Serve the materials management page
 @app.get("/materials-management/", response_class=HTMLResponse)
 async def materials_management_page():
-    with open("frontend/inventory-management.html") as file:
-        return file.read()
+    return FileResponse("frontend/inventory-management.html")
 
 # CRUD Operations for Materials
 
@@ -373,8 +369,7 @@ async def delete_site(site_id: int, db: AsyncSession = Depends(get_db)):
 @app.get("/payment-management/", response_class=HTMLResponse)
 async def read_payments_management():
     # Load and return the payment-management.html file
-    with open(os.path.join("frontend/payment-management.html")) as file:
-        return file.read()
+    return FileResponse(os.path.join("frontend/payment-management.html"))
 
 @app.post("/payments/", response_model=schemas.Payment)
 async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depends(get_db)):
