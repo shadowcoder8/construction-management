@@ -1,3 +1,6 @@
 ## 2024-04-25 - [Semantic HTML for Dashboard Cards]
 **Learning:** Found an accessibility issue pattern specific to this app where dashboard navigation cards were created using `<div>` tags with `onclick` handlers, relying on JavaScript for navigation. This breaks native keyboard navigation, screen reader support, and standard browser actions (like opening in a new tab). Also, using `alt` text identical to visible text in cards causes redundant screen reader announcements.
 **Action:** Always prefer semantic HTML elements (like `<a>` for navigation links) over `<div>`s with JavaScript handlers. For images in links where the link text already describes the destination, use `alt=""` for the image. Ensure interactive elements have distinct focus states using `:focus-visible`.
+## 2024-05-18 - [Form Accessibility Missing Labels]
+**Learning:** Found an accessibility issue pattern where HTML forms throughout the app (e.g., in `labor-management.html`) heavily rely on `placeholder` attributes instead of visible `<label>` tags or explicit `aria-label` attributes. This makes inputs unreadable to screen readers.
+**Action:** When working on form inputs or selects in this project, consistently add descriptive `aria-label` attributes to ensure accessibility without breaking the existing placeholder-driven layout.
