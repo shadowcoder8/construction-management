@@ -33,15 +33,15 @@
         <section id="labor-details">
             <h2>Manage Laborers</h2>
             <form id="labor-form" class="form-group">
-                <input type="text" id="labor-name" placeholder="Laborer Name" required>
-                <input type="number" id="labor-age" placeholder="Age" required>
-                <select id="labor-gender" required>
+                <input type="text" id="labor-name" placeholder="Laborer Name" required aria-label="Laborer Name">
+                <input type="number" id="labor-age" placeholder="Age" required aria-label="Age">
+                <select id="labor-gender" required aria-label="Gender">
                     <option value="">Select Gender</option>
                     <option value="M">Male</option>
                     <option value="F">Female</option>
                 </select>
-                <input type="number" id="labor-wage" placeholder="Daily Wage" required>
-                <input type="date" id="labor-date" placeholder="Date of Joining" required>
+                <input type="number" id="labor-wage" placeholder="Daily Wage" required aria-label="Daily Wage">
+                <input type="date" id="labor-date" placeholder="Date of Joining" required aria-label="Date of Joining">
                 <input type="hidden" id="labor-id">
                 <div class="btn-group">
                     <button type="submit" id="save-laborer-btn" class="btn btn-success">Add Laborer</button>
@@ -52,7 +52,7 @@
             <!-- Search and Heading in one line -->
             <div class="header-row">
                 <h3>Laborers List</h3>
-                <input type="text" id="search-bar" placeholder="Search by name..." class="input-search">
+                <input type="text" id="search-bar" placeholder="Search by name..." class="input-search" aria-label="Search laborers by name">
             </div>
 
             <table id="labor-list">
@@ -80,7 +80,7 @@
         <section id="attendance-history">
             <div class="header-row">
                 <h2>Attendance History</h2>
-                <input type="text" id="search-bar-labor" placeholder="Search by labor name..." class="input-search">
+                <input type="text" id="search-bar-labor" placeholder="Search by labor name..." class="input-search" aria-label="Search attendance by labor name">
             </div>
             <table id="attendance-list">
                 <thead>
@@ -115,13 +115,13 @@
             <h3>Record Attendance</h3>
             <form id="attendance-form">
                 <input type="hidden" id="attendance-labor-id">
-                <input type="date" id="attendance-date" required>
-                <select id="attendance-status" required>
+                <input type="date" id="attendance-date" required aria-label="Attendance Date">
+                <select id="attendance-status" required aria-label="Attendance Status">
                     <option value="Present">Present</option>
                     <option value="Absent">Absent</option>
                 </select>
-                <input type="number" id="hours-worked" placeholder="Hours Worked" required>
-                <input type="text" id="attendance-site-name" placeholder="Site Name" required>
+                <input type="number" id="hours-worked" placeholder="Hours Worked" required aria-label="Hours Worked">
+                <input type="text" id="attendance-site-name" placeholder="Site Name" required aria-label="Site Name">
                 <button type="submit" class="btn btn-success">Save Attendance</button>
             </form>
             <button id="close-attendance-modal" class="btn btn-secondary">Close</button>
