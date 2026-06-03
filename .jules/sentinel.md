@@ -1,4 +1,4 @@
-## 2024-05-18 - [Insecure Session Management]
-**Vulnerability:** Insecure session management using the username as the session ID.
-**Learning:** Using predictable session IDs makes the application vulnerable to session hijacking and unauthorized access.
-**Prevention:** Generate cryptographically secure session IDs using `secrets.token_hex(32)` and set the `httponly=True` flag on session cookies.
+## 2024-11-13 - [Hardcoded Secrets and Timing Attack]
+**Vulnerability:** The application had hardcoded admin credentials in `backend/auth.py` and used generic string comparison for authentication checks.
+**Learning:** Hardcoded credentials can easily be extracted from the source code. Using standard equality checks (like `==`) for sensitive comparisons such as passwords is prone to timing attacks, where an attacker can determine the correct string by analyzing how long the comparison takes. Python's built-in string comparison short-circuits on the first mismatched character.
+**Prevention:** Use environment variables for sensitive settings like credentials to ensure they aren't exposed in source code. Securely compare sensitive data with `secrets.compare_digest`, encoding strings using `.encode('utf-8')` to avoid `TypeError` on non-ASCII characters, which performs a constant-time comparison to thwart timing attacks.
