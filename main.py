@@ -121,7 +121,7 @@ async def labor_management(current_user: str = Depends(get_current_user)):
 
 # Create Labour
 @app.post("/labours/", response_model=schemas.Laborer)
-async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depends(get_db)):
+async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         return await crud.create_labour(db, labour)
     except SQLAlchemyError as e:
@@ -133,7 +133,7 @@ async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depend
 
 # Get All Labours
 @app.get("/labours/", response_model=list[schemas.Laborer])
-async def read_labours(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+async def read_labours(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         labours = await crud.get_labours(db=db, skip=skip, limit=limit)
         return labours
@@ -142,7 +142,7 @@ async def read_labours(skip: int = 0, limit: int = 10, db: AsyncSession = Depend
 
 # Search Labours by Name
 @app.get("/labours/search/", response_model=list[schemas.Laborer])
-async def search_labours(name: str, db: AsyncSession = Depends(get_db)):
+async def search_labours(name: str, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         return await crud.search_labours(db, name)
     except SQLAlchemyError:
@@ -150,7 +150,7 @@ async def search_labours(name: str, db: AsyncSession = Depends(get_db)):
 
 # Get a single Labour by ID
 @app.get("/labours/{labour_id}", response_model=schemas.Laborer)
-async def get_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
+async def get_labour(labour_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         labour = await crud.get_labour(db, labour_id)
         if labour is None:
@@ -161,7 +161,7 @@ async def get_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
 
 # Update Labour
 @app.put("/labours/{labour_id}", response_model=schemas.LaborerUpdate)
-async def update_labour(labour_id: int, updated_data: schemas.LaborerCreate, db: AsyncSession = Depends(get_db)):
+async def update_labour(labour_id: int, updated_data: schemas.LaborerCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         labour = await crud.update_labour(db, labour_id, updated_data)
         if labour is None:
@@ -172,7 +172,7 @@ async def update_labour(labour_id: int, updated_data: schemas.LaborerCreate, db:
 
 # Delete Labour
 @app.delete("/labours/{labour_id}")
-async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         result = await crud.delete_labour(db, labour_id)
         if not result:
@@ -183,7 +183,7 @@ async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
 
 # Record Attendance
 @app.post("/labours/{labour_id}/attendance/", response_model=schemas.Attendance)
-async def record_attendance(labour_id: int, attendance_data: schemas.AttendanceCreate, db: AsyncSession = Depends(get_db)):
+async def record_attendance(labour_id: int, attendance_data: schemas.AttendanceCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     logging.info(f"Received labour attendance: {attendance_data}")
     try:
         # Call the CRUD function to create attendance
@@ -212,7 +212,7 @@ async def record_attendance(labour_id: int, attendance_data: schemas.AttendanceC
 
 # Get Attendance History
 @app.get("/labours/{labour_id}/attendance/", response_model=list[schemas.Attendance])
-async def get_attendance_history(labour_id: int, db: AsyncSession = Depends(get_db)):
+async def get_attendance_history(labour_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         return await crud.get_attendance_history(db, labour_id)
     except SQLAlchemyError:
@@ -223,7 +223,7 @@ async def get_attendance_history(labour_id: int, db: AsyncSession = Depends(get_
 async def get_all_attendance(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),  # Starting point (offset)
-    limit: int = Query(10, gt=0, le=100)  # Number of records to return
+    limit: int = Query(10, gt=0, le=100), current_user: str = Depends(get_current_user)
 ):
     try:
         attendance_records = await crud.get_all_attendance(db, skip=skip, limit=limit)
@@ -240,7 +240,7 @@ async def get_all_attendance(
 
 # Get Attendance by ID
 @app.get("/attendance/{attendance_id}", response_model=schemas.Attendance)
-async def get_attendance(attendance_id: int, db: AsyncSession = Depends(get_db)):
+async def get_attendance(attendance_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         attendance = await crud.get_attendance(db, attendance_id)
         if attendance is None:
@@ -252,7 +252,7 @@ async def get_attendance(attendance_id: int, db: AsyncSession = Depends(get_db))
 
 # Update Attendance Record
 @app.put("/attendance/{attendance_id}", response_model=schemas.Attendance)
-async def update_attendance(attendance_id: int, attendance_data: schemas.AttendanceUpdate, db: AsyncSession = Depends(get_db)):
+async def update_attendance(attendance_id: int, attendance_data: schemas.AttendanceUpdate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         updated_attendance = await crud.update_attendance(db, attendance_id, attendance_data)
 
@@ -266,7 +266,7 @@ async def update_attendance(attendance_id: int, attendance_data: schemas.Attenda
 
 # Delete Attendance Record
 @app.delete("/attendance/{attendance_id}")
-async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         result = await crud.delete_attendance(db, attendance_id)
         if not result:
@@ -280,7 +280,7 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
 
 # Serve the materials management page
 @app.get("/materials-management/", response_class=HTMLResponse)
-async def materials_management_page():
+async def materials_management_page(current_user: str = Depends(get_current_user)):
     with open("frontend/inventory-management.html") as file:
         return file.read()
 
@@ -288,22 +288,22 @@ async def materials_management_page():
 
 # Create Material
 @app.post("/materials/", response_model=schemas.Material)
-async def create_material(material: schemas.MaterialCreate, db: AsyncSession = Depends(get_db)):
+async def create_material(material: schemas.MaterialCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.create_material(db, material)
 
 @app.get("/materials/", response_model=List[schemas.Material])
-async def get_materials(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+async def get_materials(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.get_materials(db, skip, limit)
 
 @app.get("/materials/{material_id}", response_model=schemas.Material)
-async def get_material(material_id: int, db: AsyncSession = Depends(get_db)):
+async def get_material(material_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     material = await crud.get_material(db, material_id)
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
     return material
 
 @app.put("/materials/{material_id}", response_model=schemas.Material)
-async def update_material_endpoint(material_id: int, material: schemas.MaterialUpdate, db: AsyncSession = Depends(get_db)):
+async def update_material_endpoint(material_id: int, material: schemas.MaterialUpdate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     updated_material = await crud.update_material(db, material_id, material)
     if not updated_material:
         raise HTTPException(status_code=404, detail="Material not found")
@@ -311,7 +311,7 @@ async def update_material_endpoint(material_id: int, material: schemas.MaterialU
 
 # Delete Material
 @app.delete("/materials/{material_id}", response_model=schemas.Material)
-async def delete_material(material_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_material(material_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     deleted_material = await crud.delete_material(db, material_id)
     if not deleted_material:
         raise HTTPException(status_code=404, detail="Material not found")
@@ -319,12 +319,12 @@ async def delete_material(material_id: int, db: AsyncSession = Depends(get_db)):
 
 # Create Site
 @app.post("/sites/", response_model=schemas.Site)
-async def create_site(site: schemas.SiteCreate, db: AsyncSession = Depends(get_db)):
+async def create_site(site: schemas.SiteCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.create_site(db, site)
 
 # Get All Sites
 @app.get("/sites/", response_model=list[schemas.Site])
-async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     try:
         sites = await crud.get_sites(db, skip=skip, limit=limit)
         return sites  # This should return the list of sites directly
@@ -334,12 +334,12 @@ async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(g
 
 # Get Site by ID
 @app.get("/sites/{site_id}", response_model=schemas.Site)
-async def get_site(site_id: int, db: AsyncSession = Depends(get_db)):
+async def get_site(site_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.get_site(db, site_id)
 
 # Update Site
 @app.put("/sites/{site_id}", response_model=schemas.Site)
-async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession = Depends(get_db)):
+async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     # Check if the site exists
     existing_site = await db.get(models.Site, site_id)
     if not existing_site:
@@ -364,20 +364,20 @@ async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession =
 
 # Delete Site
 @app.delete("/sites/{site_id}")
-async def delete_site(site_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_site(site_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     result = await crud.delete_site(db, site_id)
     return {"message": "Site deleted successfully"} if result else {"message": "Site not found"}
 
 ## Payments API Module
 # Serve the payment management page
 @app.get("/payment-management/", response_class=HTMLResponse)
-async def read_payments_management():
+async def read_payments_management(current_user: str = Depends(get_current_user)):
     # Load and return the payment-management.html file
     with open(os.path.join("frontend/payment-management.html")) as file:
         return file.read()
 
 @app.post("/payments/", response_model=schemas.Payment)
-async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depends(get_db)):
+async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     db_payment = models.Payment(
         amount=payment.amount,
         date=payment.date,
@@ -393,19 +393,19 @@ async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depe
 
 
 @app.get("/payments/", response_model=List[schemas.Payment])
-async def get_payments_endpoint(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
+async def get_payments_endpoint(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.get_payments(db, skip, limit)
 
 @app.get("/payments/{payment_id}", response_model=schemas.Payment)
-async def get_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
+async def get_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.get_payment(db, payment_id)
 
 @app.put("/payments/{payment_id}", response_model=schemas.Payment)
-async def update_payment_endpoint(payment_id: int, payment: schemas.PaymentUpdate, db: AsyncSession = Depends(get_db)):
+async def update_payment_endpoint(payment_id: int, payment: schemas.PaymentUpdate, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.update_payment(db, payment_id, payment)
 
 @app.delete("/payments/{payment_id}", response_model=schemas.Payment)
-async def delete_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db), current_user: str = Depends(get_current_user)):
     return await crud.delete_payment(db, payment_id)
 
 
