@@ -1,3 +1,4 @@
+import asyncio
 import os
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -19,6 +20,9 @@ SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def authenticate_google_drive():
     """Authenticate with Google Drive API using a service account."""
+    if not CREDENTIALS_PATH or not os.path.isfile(CREDENTIALS_PATH):
+        print(f"Warning: GOOGLE_CREDENTIALS_PATH is not set or invalid: {CREDENTIALS_PATH}. Skipping Google Drive sync.")
+        return None
     creds = Credentials.from_service_account_file(CREDENTIALS_PATH, scopes=SCOPES)
     return build('drive', 'v3', credentials=creds)
 
@@ -26,15 +30,17 @@ async def upload_file_to_drive(service):
     """Uploads or updates the SQLite file on Google Drive."""
     try:
         # Search for an existing file by name in the specified Google Drive folder
-        results = service.files().list(
+        list_req = service.files().list(
             q=f"name='{REMOTE_FILE_NAME}' and '{GOOGLE_DRIVE_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
-        ).execute()
+        )
+        results = await asyncio.to_thread(list_req.execute)
 
         # Delete existing file if found
         if results.get('files'):
             for file in results['files']:
-                service.files().delete(fileId=file['id']).execute()
+                del_req = service.files().delete(fileId=file['id'])
+                await asyncio.to_thread(del_req.execute)
                 print(f"Deleted existing file '{file['name']}' on Google Drive.")
         else:
             print(f"File '{REMOTE_FILE_NAME}' not found; a new file will be uploaded.")
@@ -45,7 +51,8 @@ async def upload_file_to_drive(service):
             'parents': [GOOGLE_DRIVE_FOLDER_ID]
         }
         media = MediaFileUpload(LOCAL_FILE_PATH, resumable=True)
-        uploaded_file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        create_req = service.files().create(body=file_metadata, media_body=media, fields='id')
+        uploaded_file = await asyncio.to_thread(create_req.execute)
         print(f"File uploaded to Google Drive successfully. File ID: {uploaded_file.get('id')}")
 
     except HttpError as e:
@@ -56,10 +63,11 @@ async def download_file_from_drive(service):
     """Downloads the latest SQLite file from Google Drive to LOCAL_FILE_PATH."""
     try:
         # Search for the file by name
-        results = service.files().list(
+        list_req = service.files().list(
             q=f"name='{REMOTE_FILE_NAME}' and '{GOOGLE_DRIVE_FOLDER_ID}' in parents and trashed=false",
             fields="files(id, name)"
-        ).execute()
+        )
+        results = await asyncio.to_thread(list_req.execute)
 
         if not results.get('files'):
             print(f"File '{REMOTE_FILE_NAME}' not found in Google Drive.")
@@ -68,12 +76,16 @@ async def download_file_from_drive(service):
         # Download the file
         file_id = results['files'][0]['id']
         request = service.files().get_media(fileId=file_id)
+
+        # We also need to run file I/O in thread to be fully async-safe, but here
+        # the main blocking calls are network I/O from downloader.next_chunk()
         with open(LOCAL_FILE_PATH, 'wb') as fh:
             downloader = MediaIoBaseDownload(fh, request)
             done = False
             while not done:
-                status, done = downloader.next_chunk()
-                print(f"Download progress: {int(status.progress() * 100)}%")
+                status, done = await asyncio.to_thread(downloader.next_chunk)
+                if status:
+                    print(f"Download progress: {int(status.progress() * 100)}%")
 
         print(f"Downloaded file to {LOCAL_FILE_PATH} successfully.")
 
