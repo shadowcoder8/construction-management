@@ -14,12 +14,15 @@ logger = logging.getLogger(__name__)
 
 # Create Labour
 async def create_labour(db: AsyncSession, labour: schemas.LaborerCreate):
-    db_labour = models.Laborer(**labour.model_dump())
-    db.add(db_labour)
-    await db.flush()  # Flush before commit to handle potential primary key creation
-    await db.commit()
-    await db.refresh(db_labour)
-    return db_labour
+    try:
+        db_labour = models.Laborer(**labour.model_dump())
+        db.add(db_labour)
+        await db.flush()  # Flush before commit to handle potential primary key creation
+        await db.commit()
+        await db.refresh(db_labour)
+        return db_labour
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail="Database error occurred")
 
 # Get All Labours
 async def get_labours(db: AsyncSession, skip: int = 0, limit: int = 10):
