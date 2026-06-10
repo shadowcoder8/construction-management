@@ -9,3 +9,7 @@ Always use an environment variable (like `ALLOWED_ORIGINS`) to strictly define a
 **Prevention:**
 1. Do not use wildcard `["*"]` for CORS in production setups, especially with authenticated routes.
 2. Verify CORS setups using testing frameworks like Pytest or by configuring restricted inputs dynamically through the `.env` configuration.
+## 2024-11-20 - [Hardcoded Admin Credentials]
+**Vulnerability:** Found hardcoded credentials `admin` / `admin123` in `backend/auth.py`'s `authenticate_admin` function.
+**Learning:** Hardcoding credentials inside code allows any source-code reader to compromise the system. It should be securely checked against environment variables instead.
+**Prevention:** Use `os.getenv` to read credentials. Use `secrets.compare_digest` with utf-8 encoding for timing-attack-resistant comparisons. If credentials aren't configured, fail securely by returning a 500 error rather than masking the configuration gap.
