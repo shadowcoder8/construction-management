@@ -11,6 +11,7 @@ import os
 import secrets
 from sqlalchemy.exc import SQLAlchemyError
 import logging
+from backend.auth import authenticate_admin
 from backend import utility
 import uvicorn
 
@@ -84,7 +85,6 @@ async def read_root():
 # Admin login route
 @app.post("/admin/login/")
 async def admin_login(login_request: models.LoginRequest, response: Response):
-    from backend.auth import authenticate_admin
     try:
         authenticate_admin(login_request.username, login_request.password)
         # Create a secure session ID for the admin user
