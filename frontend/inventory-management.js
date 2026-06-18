@@ -98,13 +98,20 @@ materialForm.addEventListener('submit', async (e) => {
 
 // Add material
 async function addMaterial(material) {
-    const response = await fetch('/materials/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(material)
-    });
-    if (!response.ok) throw new Error('Failed to add material');
-    alert('Material added successfully');
+    try {
+        const response = await fetch("/materials/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(material),
+        });
+        if (!response.ok) throw new Error("Failed to add material");
+        loadMaterials();
+    } catch (error) {
+        console.error("Error adding material:", error);
+        alert("Failed to add material.");
+    }
 }
 
 // Update material
