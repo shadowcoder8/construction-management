@@ -159,6 +159,7 @@ async function addPayment(paymentData) {
 
 // Delete a payment
 async function deletePayment(paymentId) {
+    if (!confirm('Are you sure you want to delete this payment record?')) return;
     const response = await fetch(`/payments/${paymentId}`, {
         method: 'DELETE'
     });
