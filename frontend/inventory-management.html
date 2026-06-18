@@ -25,13 +25,13 @@
         <section id="site-section">
             <h2>Sites</h2>
             <form id="site-form">
-                <input type="text" id="site-name" placeholder="Site Name" required>
-                <input type="text" id="site-location" placeholder="Site Location" required>
+                <input type="text" id="site-name" placeholder="Site Name" aria-label="Site Name" required>
+                <input type="text" id="site-location" placeholder="Site Location" aria-label="Site Location" required>
                 <button type="submit" id="save-site-btn" class="btn btn-success">Add Or Update Site</button>
                 <button type="button" id="close-site-form" class="btn btn-secondary">Close</button>
             </form>
 
-            <input type="text" id="search-site" placeholder="Search sites by name..." class="input-search">
+            <input type="text" id="search-site" placeholder="Search sites by name..." aria-label="Search sites by name" class="input-search">
             <table id="site-list">
                 <thead>
                     <tr>
@@ -49,9 +49,9 @@
         <section id="material-section" class="mt-20">
             <h2>Materials</h2>
             <form id="material-form">
-                <input type="text" id="material-name" placeholder="Material Name" required>
-                <input type="number" id="material-quantity" placeholder="Quantity" required>
-                <select id="material-unit" required>
+                <input type="text" id="material-name" placeholder="Material Name" aria-label="Material Name" required>
+                <input type="number" id="material-quantity" placeholder="Quantity" aria-label="Quantity" required>
+                <select id="material-unit" aria-label="Material Unit" required>
                     <option value="">Select Unit</option>
                     <option value="kg">Kilogram (kg)</option>
                     <option value="liter">Liter</option>
@@ -78,12 +78,12 @@
                     <option value="nos">Nos</option>
                     <option value="pieces/box">Pieces/Box</option>
                 </select>
-                <select id="material-site" required>
+                <select id="material-site" aria-label="Material Site" required>
                     <option value="">Select Site</option>
                     <!-- Sites will be dynamically loaded here -->
                 </select>
-                <input type="date" id="arrival-date" required>
-                <select id="transport-type" required>
+                <input type="date" id="arrival-date" aria-label="Arrival Date" required>
+                <select id="transport-type" aria-label="Transport Type" required>
                     <option value="">Select Transport Type</option>
                     <option value="pickup">Pickup</option>
                     <option value="truck">Truck</option>
@@ -94,7 +94,7 @@
                 <button type="button" id="close-material-form" class="btn btn-secondary">Close</button>
             </form>
 
-            <input type="text" id="search-material" placeholder="Search materials by name..." class="input-search">
+            <input type="text" id="search-material" placeholder="Search materials by name..." aria-label="Search materials by name" class="input-search">
             <table id="material-list">
                 <thead>
                     <tr>
