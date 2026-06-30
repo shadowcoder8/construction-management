@@ -9,3 +9,16 @@ Always use an environment variable (like `ALLOWED_ORIGINS`) to strictly define a
 **Prevention:**
 1. Do not use wildcard `["*"]` for CORS in production setups, especially with authenticated routes.
 2. Verify CORS setups using testing frameworks like Pytest or by configuring restricted inputs dynamically through the `.env` configuration.
+
+## 2024-05-18 - Hardcoded Service Account Credentials in Repository
+
+**Vulnerability:**
+The repository contained a `credentials.json` file which was tracked by git. This file held the private key and other sensitive details for a Google Service Account used for Google Drive API synchronization. Committing such files exposes the entire service account and connected cloud resources to anyone with read access to the repository or its history.
+
+**Learning:**
+Never commit service account JSON keys or any sensitive credentials directly into the repository. Even if a repository is private, credentials should be managed securely outside of version control. The presence of the file indicated a significant security risk.
+
+**Prevention:**
+1. Explicitly add sensitive files (e.g., `credentials.json`, `.env`) to `.gitignore` immediately upon creation.
+2. Rely on environment variables (like `GOOGLE_CREDENTIALS_PATH` which was already present in `utility.py`) to specify the path to these files, which should be injected or mounted securely in production environments.
+3. Remove accidentally committed secrets from git history if they are compromised, or immediately rotate the keys.
