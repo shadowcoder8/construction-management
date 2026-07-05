@@ -92,9 +92,14 @@ async def admin_login(login_request: models.LoginRequest, response: Response):
         sessions[session_id] = login_request.username  # Map session ID to username
         response.set_cookie("session_id", session_id, httponly=True)
         return {"message": "Login successful"}
+    except HTTPException as e:
+        # Re-raise HTTP exceptions (e.g. 500 for missing config or 401 for bad auth)
+        logging.error(f"Login logic failed for {login_request.username}: {e.detail}")
+        raise
     except Exception as e:
-        logging.error(f"Login failed for {login_request.username}: {str(e)}")
-        raise HTTPException(status_code=401, detail=str(e))  # Unauthorized
+        logging.error(f"Unexpected login error for {login_request.username}: {str(e)}")
+        # Do not expose internal details in the generic exception response
+        raise HTTPException(status_code=401, detail="Invalid username or password")
 
 # Admin logout route
 @app.post("/admin/logout/")
