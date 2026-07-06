@@ -24,25 +24,25 @@
         <section id="payment-section" class="mt-20">
             <h2>Record Payment</h2>
             <form id="payment-form">
-                <input type="number" id="payment-amount" placeholder="Payment Amount" required>
-                <input type="date" id="payment-date" required>
+                <input type="number" id="payment-amount" placeholder="Payment Amount" required aria-label="Payment Amount">
+                <input type="date" id="payment-date" required aria-label="Payment Date">
 
-                <select id="labor-select" required>
+                <select id="labor-select" required aria-label="Labor Select">
                     <option value="">Select Labor</option>
                     <!-- Labor options will be dynamically loaded here -->
                 </select>
 
-                <select id="site-select" required>
+                <select id="site-select" required aria-label="Site Select">
                     <option value="">Select Site</option>
                     <!-- Site options will be dynamically loaded here -->
                 </select>
-                <input type="text" id="material-name" placeholder="Material (Optional)">
-                <input type="text" id="payment-description" placeholder="Description (Optional)">
+                <input type="text" id="material-name" placeholder="Material (Optional)" aria-label="Material (Optional)">
+                <input type="text" id="payment-description" placeholder="Description (Optional)" aria-label="Description (Optional)">
                 <button type="submit" id="save-payment-btn" class="btn btn-primary">Add Payment</button>
                 <button type="button" id="close-payment-form" class="btn btn-secondary">Close</button>
             </form>
 
-            <input type="text" id="search-payment" placeholder="Search payments..." class="input-search">
+            <input type="text" id="search-payment" placeholder="Search payments..." class="input-search" aria-label="Search payments">
             <table id="payment-list">
                 <thead>
                     <tr>
