@@ -159,14 +159,18 @@ async function addPayment(paymentData) {
 
 // Delete a payment
 async function deletePayment(paymentId) {
+    if (!confirm('Are you sure you want to delete this payment?')) return;
     const response = await fetch(`/payments/${paymentId}`, {
         method: 'DELETE'
     });
 
     if (response.ok) {
+        alert('Payment deleted successfully');
         await loadPayments(); // Refresh payments after deleting
     } else {
-        console.error('Failed to delete payment:', await response.json());
+        const errorData = await response.json();
+        alert('Failed to delete payment');
+        console.error('Failed to delete payment:', errorData);
     }
 }
 
