@@ -19,6 +19,10 @@
             color: #007bff;
         }
     </style>
+
+    <!-- Modern Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div id="loading">Loading...</div>
@@ -35,7 +39,7 @@
             <form id="labor-form" class="form-group">
                 <input type="text" id="labor-name" placeholder="Laborer Name" aria-label="Laborer Name" required>
                 <input type="number" id="labor-age" placeholder="Age" aria-label="Age" required>
-                <select id="labor-gender" aria-label="Gender" required>
+                <select id="labor-gender" aria-label="Select Gender" required>
                     <option value="">Select Gender</option>
                     <option value="M">Male</option>
                     <option value="F">Female</option>
@@ -52,7 +56,7 @@
             <!-- Search and Heading in one line -->
             <div class="header-row">
                 <h3>Laborers List</h3>
-                <input type="text" id="search-bar" placeholder="Search by name..." aria-label="Search by name" class="input-search">
+                <input type="text" id="search-bar" placeholder="Search by name..." aria-label="Search laborers by name" class="input-search">
             </div>
 
             <table id="labor-list">
@@ -80,7 +84,7 @@
         <section id="attendance-history">
             <div class="header-row">
                 <h2>Attendance History</h2>
-                <input type="text" id="search-bar-labor" placeholder="Search by labor name..." aria-label="Search by labor name" class="input-search">
+                <input type="text" id="search-bar-labor" placeholder="Search by labor name..." aria-label="Search attendance by labor name" class="input-search">
             </div>
             <table id="attendance-list">
                 <thead>

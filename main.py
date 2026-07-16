@@ -22,10 +22,13 @@ async def lifespan(app: FastAPI):
     # Authenticate with Mega and download the latest database
     service =  utility.authenticate_google_drive()
     try:
-        # Upload the updated database file to Google Drive on startup
-        await utility.upload_file_to_drive(service)
-        print("Database upload to Google Drive complete.")
-        await utility.download_file_from_drive(service)  # Ensure the latest database file is available
+        if service:
+            # Upload the updated database file to Google Drive on startup
+            await utility.upload_file_to_drive(service)
+            print("Database upload to Google Drive complete.")
+            await utility.download_file_from_drive(service)  # Ensure the latest database file is available
+        else:
+            print("Skipping Google Drive startup sync due to missing credentials.")
 
         # Set up the database
         async with engine.begin() as conn:
@@ -38,9 +41,12 @@ async def lifespan(app: FastAPI):
 
     # Shutdown tasks
     try:
-        # Upload the updated database file to Mega on shutdown
-        await utility.upload_file_to_drive(service)
-        print("Database upload to Google Drive complete.")
+        if service:
+            # Upload the updated database file to Mega on shutdown
+            await utility.upload_file_to_drive(service)
+            print("Database upload to Google Drive complete.")
+        else:
+            print("Skipping Google Drive shutdown sync due to missing credentials.")
 
         # Clean up database resources
         await engine.dispose()
@@ -52,9 +58,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # Enable CORS (Cross-Origin Resource Sharing)
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
