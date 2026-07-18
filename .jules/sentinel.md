@@ -21,3 +21,15 @@ Hardcoded credentials pose a critical risk because they provide an easy entry po
 **Prevention:**
 1. Never commit secrets, API keys, or passwords into the source code repository. Always read sensitive configuration using environment variables (e.g., `os.getenv`).
 2. Implement secure comparisons utilizing functions designed to prevent timing attacks, like `secrets.compare_digest()`, and properly encode inputs to prevent TypeErrors on non-ASCII characters.
+
+## 2024-05-20 - Exception Handling Information Leak in Admin Login
+
+**Vulnerability:**
+The `admin_login` route in `main.py` had a generic `except Exception as e:` block that caught all exceptions and returned the exception's string representation `str(e)` to the client inside a 401 Unauthorized response. If an unexpected internal error occurred (e.g. database failure, missing environment variables leading to a 500 error in `authenticate_admin`), the underlying error details or stack trace fragments could be exposed to potential attackers.
+
+**Learning:**
+Generic exception handlers that echo the error message back to the client violate the "fail securely" principle and create an Information Exposure vulnerability. Additionally, catching `Exception` indiscriminately in FastAPI can swallow intended `HTTPException` raises (like a 500 from misconfigured credentials), incorrectly returning them as 401s with leaked details.
+
+**Prevention:**
+1. Explicitly catch known HTTPExceptions and re-raise them, or handle them appropriately.
+2. Catch general `Exception` separately as a fallback and return generic, non-descriptive error messages to the client (e.g., "Internal server error") while logging the actual `str(e)` server-side.
