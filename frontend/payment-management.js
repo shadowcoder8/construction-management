@@ -151,22 +151,29 @@ async function addPayment(paymentData) {
     });
 
     if (response.ok) {
+        alert("Payment added successfully!");
         await loadPayments(); // Refresh payments after adding
     } else {
+        alert("Failed to add payment.");
         console.error('Failed to add payment:', await response.json());
     }
 }
 
 // Delete a payment
 async function deletePayment(paymentId) {
-    const response = await fetch(`/payments/${paymentId}`, {
-        method: 'DELETE'
-    });
+    const confirmed = confirm("Are you sure you want to delete this payment?");
+    if (confirmed) {
+        const response = await fetch(`/payments/${paymentId}`, {
+            method: 'DELETE'
+        });
 
-    if (response.ok) {
-        await loadPayments(); // Refresh payments after deleting
-    } else {
-        console.error('Failed to delete payment:', await response.json());
+        if (response.ok) {
+            alert("Payment deleted successfully!");
+            await loadPayments(); // Refresh payments after deleting
+        } else {
+            alert("Failed to delete payment.");
+            console.error('Failed to delete payment:', await response.json());
+        }
     }
 }
 
@@ -210,8 +217,10 @@ async function updatePayment(paymentId, paymentData) {
     });
 
     if (response.ok) {
+        alert("Payment updated successfully!");
         await loadPayments(); // Refresh payments after updating
     } else {
+        alert("Failed to update payment.");
         console.error('Failed to update payment:', await response.json());
     }
 }

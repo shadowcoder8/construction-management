@@ -9,3 +9,9 @@
 **Learning:** The application's HTML forms heavily rely on `placeholder` attributes instead of visible `<label>` tags. To ensure accessibility for screen readers without breaking the existing layout or visual design, it is critical to add explicit `aria-label` attributes to all non-hidden input, select, and textarea elements.
 
 **Action:** Added `aria-label` attributes corresponding to the placeholder or intended function for all `input` (excluding `type="hidden"`) and `select` elements across the main management forms (`labor-management.html`, `inventory-management.html`, and `payment-management.html`).
+
+## 2026-07-18 - Adding Confirmation and Feedback to Destructive/Async Actions
+
+**Learning:** When performing destructive actions like deleting a payment record, users expect a confirmation step to avoid accidental data loss. Furthermore, for asynchronous actions (like adding, updating, or deleting), providing explicit feedback (`alert()` or toasts) lets the user know if their action was successful or if an error occurred, resulting in a more reassuring experience.
+
+**Action:** Updated the `deletePayment` function in `frontend/payment-management.js` to utilize the native browser `confirm()` dialog. Also added `alert()` feedback for both success and failure cases in `addPayment`, `updatePayment`, and `deletePayment` functions to align with existing project patterns.
