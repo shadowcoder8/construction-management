@@ -21,3 +21,15 @@ Hardcoded credentials pose a critical risk because they provide an easy entry po
 **Prevention:**
 1. Never commit secrets, API keys, or passwords into the source code repository. Always read sensitive configuration using environment variables (e.g., `os.getenv`).
 2. Implement secure comparisons utilizing functions designed to prevent timing attacks, like `secrets.compare_digest()`, and properly encode inputs to prevent TypeErrors on non-ASCII characters.
+
+## 2024-05-20 - Missing Authentication on Sensitive Endpoints
+
+**Vulnerability:**
+Several core API endpoints and management pages in `main.py` (e.g., `/labours/`, `/attendance/`, `/materials/`, `/sites/`, `/payments/`, `/materials-management/`, `/payment-management/`) were missing authentication checks. This allowed unauthenticated users to access sensitive data and perform CRUD operations, bypassing authorization entirely.
+
+**Learning:**
+Authentication dependencies are not automatically applied to all routes in a FastAPI application unless defined globally. Developers must remember to secure each endpoint individually or configure a router-level dependency to prevent unauthorized access to administrative or sensitive functions.
+
+**Prevention:**
+1. Enforce authentication on all core API and management endpoints using `dependencies=[Depends(get_current_user)]` in the route decorators.
+2. Regularly review route definitions and implement automated security tests to ensure unauthenticated requests to protected endpoints return a 401 Unauthorized status.
