@@ -128,7 +128,7 @@ async def labor_management(current_user: str = Depends(get_current_user)):
 ## Labour details
 
 # Create Labour
-@app.post("/labours/", response_model=schemas.Laborer)
+@app.post("/labours/", response_model=schemas.Laborer, dependencies=[Depends(get_current_user)])
 async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depends(get_db)):
     try:
         return await crud.create_labour(db, labour)
@@ -140,7 +140,7 @@ async def create_labour(labour: schemas.LaborerCreate, db: AsyncSession = Depend
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 # Get All Labours
-@app.get("/labours/", response_model=list[schemas.Laborer])
+@app.get("/labours/", response_model=list[schemas.Laborer], dependencies=[Depends(get_current_user)])
 async def read_labours(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     try:
         labours = await crud.get_labours(db=db, skip=skip, limit=limit)
@@ -149,7 +149,7 @@ async def read_labours(skip: int = 0, limit: int = 10, db: AsyncSession = Depend
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Search Labours by Name
-@app.get("/labours/search/", response_model=list[schemas.Laborer])
+@app.get("/labours/search/", response_model=list[schemas.Laborer], dependencies=[Depends(get_current_user)])
 async def search_labours(name: str, db: AsyncSession = Depends(get_db)):
     try:
         return await crud.search_labours(db, name)
@@ -157,7 +157,7 @@ async def search_labours(name: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Get a single Labour by ID
-@app.get("/labours/{labour_id}", response_model=schemas.Laborer)
+@app.get("/labours/{labour_id}", response_model=schemas.Laborer, dependencies=[Depends(get_current_user)])
 async def get_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
     try:
         labour = await crud.get_labour(db, labour_id)
@@ -168,7 +168,7 @@ async def get_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Update Labour
-@app.put("/labours/{labour_id}", response_model=schemas.LaborerUpdate)
+@app.put("/labours/{labour_id}", response_model=schemas.LaborerUpdate, dependencies=[Depends(get_current_user)])
 async def update_labour(labour_id: int, updated_data: schemas.LaborerCreate, db: AsyncSession = Depends(get_db)):
     try:
         labour = await crud.update_labour(db, labour_id, updated_data)
@@ -179,7 +179,7 @@ async def update_labour(labour_id: int, updated_data: schemas.LaborerCreate, db:
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Delete Labour
-@app.delete("/labours/{labour_id}")
+@app.delete("/labours/{labour_id}", dependencies=[Depends(get_current_user)])
 async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
     try:
         result = await crud.delete_labour(db, labour_id)
@@ -190,7 +190,7 @@ async def delete_labour(labour_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Record Attendance
-@app.post("/labours/{labour_id}/attendance/", response_model=schemas.Attendance)
+@app.post("/labours/{labour_id}/attendance/", response_model=schemas.Attendance, dependencies=[Depends(get_current_user)])
 async def record_attendance(labour_id: int, attendance_data: schemas.AttendanceCreate, db: AsyncSession = Depends(get_db)):
     logging.info(f"Received labour attendance: {attendance_data}")
     try:
@@ -219,7 +219,7 @@ async def record_attendance(labour_id: int, attendance_data: schemas.AttendanceC
 
 
 # Get Attendance History
-@app.get("/labours/{labour_id}/attendance/", response_model=list[schemas.Attendance])
+@app.get("/labours/{labour_id}/attendance/", response_model=list[schemas.Attendance], dependencies=[Depends(get_current_user)])
 async def get_attendance_history(labour_id: int, db: AsyncSession = Depends(get_db)):
     try:
         return await crud.get_attendance_history(db, labour_id)
@@ -227,7 +227,7 @@ async def get_attendance_history(labour_id: int, db: AsyncSession = Depends(get_
         raise HTTPException(status_code=500, detail="Database error occurred")  # Generic error message
 
 # Get All Attendance Records with Pagination
-@app.get("/attendance/", response_model=schemas.AttendanceResponse)  # Adjust to your schema
+@app.get("/attendance/", response_model=schemas.AttendanceResponse, dependencies=[Depends(get_current_user)])  # Adjust to your schema
 async def get_all_attendance(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),  # Starting point (offset)
@@ -247,7 +247,7 @@ async def get_all_attendance(
         raise HTTPException(status_code=500, detail="Database error occurred")
 
 # Get Attendance by ID
-@app.get("/attendance/{attendance_id}", response_model=schemas.Attendance)
+@app.get("/attendance/{attendance_id}", response_model=schemas.Attendance, dependencies=[Depends(get_current_user)])
 async def get_attendance(attendance_id: int, db: AsyncSession = Depends(get_db)):
     try:
         attendance = await crud.get_attendance(db, attendance_id)
@@ -259,7 +259,7 @@ async def get_attendance(attendance_id: int, db: AsyncSession = Depends(get_db))
 
 
 # Update Attendance Record
-@app.put("/attendance/{attendance_id}", response_model=schemas.Attendance)
+@app.put("/attendance/{attendance_id}", response_model=schemas.Attendance, dependencies=[Depends(get_current_user)])
 async def update_attendance(attendance_id: int, attendance_data: schemas.AttendanceUpdate, db: AsyncSession = Depends(get_db)):
     try:
         updated_attendance = await crud.update_attendance(db, attendance_id, attendance_data)
@@ -273,7 +273,7 @@ async def update_attendance(attendance_id: int, attendance_data: schemas.Attenda
 
 
 # Delete Attendance Record
-@app.delete("/attendance/{attendance_id}")
+@app.delete("/attendance/{attendance_id}", dependencies=[Depends(get_current_user)])
 async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_db)):
     try:
         result = await crud.delete_attendance(db, attendance_id)
@@ -287,7 +287,7 @@ async def delete_attendance(attendance_id: int, db: AsyncSession = Depends(get_d
 ## Material Management Codes
 
 # Serve the materials management page
-@app.get("/materials-management/", response_class=HTMLResponse)
+@app.get("/materials-management/", response_class=HTMLResponse, dependencies=[Depends(get_current_user)])
 async def materials_management_page():
     with open("frontend/inventory-management.html") as file:
         return file.read()
@@ -295,22 +295,22 @@ async def materials_management_page():
 # CRUD Operations for Materials
 
 # Create Material
-@app.post("/materials/", response_model=schemas.Material)
+@app.post("/materials/", response_model=schemas.Material, dependencies=[Depends(get_current_user)])
 async def create_material(material: schemas.MaterialCreate, db: AsyncSession = Depends(get_db)):
     return await crud.create_material(db, material)
 
-@app.get("/materials/", response_model=List[schemas.Material])
+@app.get("/materials/", response_model=List[schemas.Material], dependencies=[Depends(get_current_user)])
 async def get_materials(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     return await crud.get_materials(db, skip, limit)
 
-@app.get("/materials/{material_id}", response_model=schemas.Material)
+@app.get("/materials/{material_id}", response_model=schemas.Material, dependencies=[Depends(get_current_user)])
 async def get_material(material_id: int, db: AsyncSession = Depends(get_db)):
     material = await crud.get_material(db, material_id)
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
     return material
 
-@app.put("/materials/{material_id}", response_model=schemas.Material)
+@app.put("/materials/{material_id}", response_model=schemas.Material, dependencies=[Depends(get_current_user)])
 async def update_material_endpoint(material_id: int, material: schemas.MaterialUpdate, db: AsyncSession = Depends(get_db)):
     updated_material = await crud.update_material(db, material_id, material)
     if not updated_material:
@@ -318,7 +318,7 @@ async def update_material_endpoint(material_id: int, material: schemas.MaterialU
     return updated_material
 
 # Delete Material
-@app.delete("/materials/{material_id}", response_model=schemas.Material)
+@app.delete("/materials/{material_id}", response_model=schemas.Material, dependencies=[Depends(get_current_user)])
 async def delete_material(material_id: int, db: AsyncSession = Depends(get_db)):
     deleted_material = await crud.delete_material(db, material_id)
     if not deleted_material:
@@ -326,12 +326,12 @@ async def delete_material(material_id: int, db: AsyncSession = Depends(get_db)):
     return deleted_material
 
 # Create Site
-@app.post("/sites/", response_model=schemas.Site)
+@app.post("/sites/", response_model=schemas.Site, dependencies=[Depends(get_current_user)])
 async def create_site(site: schemas.SiteCreate, db: AsyncSession = Depends(get_db)):
     return await crud.create_site(db, site)
 
 # Get All Sites
-@app.get("/sites/", response_model=list[schemas.Site])
+@app.get("/sites/", response_model=list[schemas.Site], dependencies=[Depends(get_current_user)])
 async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     try:
         sites = await crud.get_sites(db, skip=skip, limit=limit)
@@ -341,12 +341,12 @@ async def get_sites(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(g
         raise HTTPException(status_code=500, detail="Database error occurred")
 
 # Get Site by ID
-@app.get("/sites/{site_id}", response_model=schemas.Site)
+@app.get("/sites/{site_id}", response_model=schemas.Site, dependencies=[Depends(get_current_user)])
 async def get_site(site_id: int, db: AsyncSession = Depends(get_db)):
     return await crud.get_site(db, site_id)
 
 # Update Site
-@app.put("/sites/{site_id}", response_model=schemas.Site)
+@app.put("/sites/{site_id}", response_model=schemas.Site, dependencies=[Depends(get_current_user)])
 async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession = Depends(get_db)):
     # Check if the site exists
     existing_site = await db.get(models.Site, site_id)
@@ -371,20 +371,20 @@ async def update_site(site_id: int, site: schemas.SiteUpdate, db: AsyncSession =
         raise HTTPException(status_code=500, detail="Database error occurred")
 
 # Delete Site
-@app.delete("/sites/{site_id}")
+@app.delete("/sites/{site_id}", dependencies=[Depends(get_current_user)])
 async def delete_site(site_id: int, db: AsyncSession = Depends(get_db)):
     result = await crud.delete_site(db, site_id)
     return {"message": "Site deleted successfully"} if result else {"message": "Site not found"}
 
 ## Payments API Module
 # Serve the payment management page
-@app.get("/payment-management/", response_class=HTMLResponse)
+@app.get("/payment-management/", response_class=HTMLResponse, dependencies=[Depends(get_current_user)])
 async def read_payments_management():
     # Load and return the payment-management.html file
     with open(os.path.join("frontend/payment-management.html")) as file:
         return file.read()
 
-@app.post("/payments/", response_model=schemas.Payment)
+@app.post("/payments/", response_model=schemas.Payment, dependencies=[Depends(get_current_user)])
 async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depends(get_db)):
     db_payment = models.Payment(
         amount=payment.amount,
@@ -400,19 +400,19 @@ async def create_payment(payment: schemas.PaymentCreate, db: AsyncSession = Depe
     return db_payment
 
 
-@app.get("/payments/", response_model=List[schemas.Payment])
+@app.get("/payments/", response_model=List[schemas.Payment], dependencies=[Depends(get_current_user)])
 async def get_payments_endpoint(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     return await crud.get_payments(db, skip, limit)
 
-@app.get("/payments/{payment_id}", response_model=schemas.Payment)
+@app.get("/payments/{payment_id}", response_model=schemas.Payment, dependencies=[Depends(get_current_user)])
 async def get_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
     return await crud.get_payment(db, payment_id)
 
-@app.put("/payments/{payment_id}", response_model=schemas.Payment)
+@app.put("/payments/{payment_id}", response_model=schemas.Payment, dependencies=[Depends(get_current_user)])
 async def update_payment_endpoint(payment_id: int, payment: schemas.PaymentUpdate, db: AsyncSession = Depends(get_db)):
     return await crud.update_payment(db, payment_id, payment)
 
-@app.delete("/payments/{payment_id}", response_model=schemas.Payment)
+@app.delete("/payments/{payment_id}", response_model=schemas.Payment, dependencies=[Depends(get_current_user)])
 async def delete_payment_endpoint(payment_id: int, db: AsyncSession = Depends(get_db)):
     return await crud.delete_payment(db, payment_id)
 
