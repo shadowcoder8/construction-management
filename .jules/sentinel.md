@@ -21,3 +21,15 @@ Hardcoded credentials pose a critical risk because they provide an easy entry po
 **Prevention:**
 1. Never commit secrets, API keys, or passwords into the source code repository. Always read sensitive configuration using environment variables (e.g., `os.getenv`).
 2. Implement secure comparisons utilizing functions designed to prevent timing attacks, like `secrets.compare_digest()`, and properly encode inputs to prevent TypeErrors on non-ASCII characters.
+
+## 2024-05-20 - Missing Authentication on Core API Endpoints
+
+**Vulnerability:**
+Many core API endpoints (such as `/labours/`, `/attendance/`, `/materials/`, `/sites/`, and `/payments/`) and management HTML pages were exposed without any authentication checks. This allowed unauthenticated users to access, modify, and delete sensitive data.
+
+**Learning:**
+Relying only on frontend UI navigation hiding is insecure. Backend API endpoints must independently verify the user's authentication and authorization state using dependency injection (e.g., `Depends(get_current_user)`) on every protected route.
+
+**Prevention:**
+1. Apply a default-deny approach to API routing; endpoints should require authentication by default unless explicitly public (like login).
+2. Utilize FastAPI's `dependencies=[Depends(...)]` feature within route decorators to enforce authentication checks consistently across all related endpoints.
