@@ -4,3 +4,7 @@
 ## 2026-04-26 - [Form Input Accessibility without Visible Labels]
 **Learning:** This app's form design relies heavily on placeholder attributes instead of visible `<label>` tags. Since placeholders disappear upon input and may not be reliably announced by all screen readers, this creates an accessibility issue for users relying on screen readers.
 **Action:** When a visible `<label>` is not present (or omitted for visual layout reasons), always add an `aria-label` attribute to the input/select element to ensure it is accessible.
+
+## 2026-07-23 - [Dynamic ARIA labels for Stateful Icon Buttons]
+**Learning:** When using stateful icon-only buttons (like a password visibility toggle), relying solely on visual icon changes (e.g., eye to eye-slash) leaves screen reader users unaware of the state change. The `aria-label` must be dynamically updated via JavaScript to reflect the current action (e.g., "Show password" to "Hide password").
+**Action:** Always bind `aria-label` updates to state changes in JavaScript for icon-only toggle buttons to ensure the accessibility tree remains accurate.
