@@ -1,3 +1,18 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const togglePasswordBtn = document.getElementById("toggle-password");
+    const passwordInput = document.getElementById("password");
+    const togglePasswordIcon = document.getElementById("toggle-password-icon");
+
+    if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+        togglePasswordBtn.addEventListener("click", () => {
+            const isPassword = passwordInput.getAttribute("type") === "password";
+            passwordInput.setAttribute("type", isPassword ? "text" : "password");
+            togglePasswordIcon.className = isPassword ? "fas fa-eye-slash" : "fas fa-eye";
+            togglePasswordBtn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
+        });
+    }
+});
+
 document.getElementById("login-form").addEventListener("submit", (e) => {
     e.preventDefault();
 
