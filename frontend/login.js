@@ -1,3 +1,20 @@
+document.getElementById("toggle-password").addEventListener("click", function() {
+    const passwordInput = document.getElementById("password");
+    const icon = document.getElementById("toggle-password-icon");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+        this.setAttribute("aria-label", "Hide password");
+    } else {
+        passwordInput.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+        this.setAttribute("aria-label", "Show password");
+    }
+});
+
 document.getElementById("login-form").addEventListener("submit", (e) => {
     e.preventDefault();
 
